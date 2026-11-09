@@ -2,6 +2,9 @@
 
 # tabEE — the tab exchange engine
 
+[![npm version](https://img.shields.io/npm/v/%40tabee%2Fbrowser)](https://www.npmjs.com/package/@tabee/browser)
+[![license](https://img.shields.io/npm/l/%40tabee%2Fbrowser)](https://github.com/Wytamma/cdep/blob/main/LICENSE)
+
 tabEE moves datasets between two browser applications: one opens the other,
 they discover matching formats, the user approves what arrives, and the
 receiver imports the bytes. No backend, no shared code, and no prior knowledge
@@ -9,6 +12,20 @@ of the other side.
 
 Browser-only. Ships a TypeScript SDK, a wire specification, and reference
 sender and receiver applications.
+
+## Install
+
+```sh
+npm install @tabee/browser @tabee/formats @tabee/protocol
+```
+
+## Packages
+
+| Package | Purpose |
+| --- | --- |
+| [`@tabee/browser`](https://www.npmjs.com/package/@tabee/browser) | Browser SDK: bridge, handshake, Penpal transport, consent, sender, receiver. |
+| [`@tabee/formats`](https://www.npmjs.com/package/@tabee/formats) | Format identifiers, registry entries, and capability helpers. |
+| [`@tabee/protocol`](https://www.npmjs.com/package/@tabee/protocol) | Wire types, validators, negotiation, state machine, error codes. |
 
 ## Features
 
