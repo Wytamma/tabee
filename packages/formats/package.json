@@ -1,7 +1,7 @@
 {
-  "name": "@cdep/formats",
+  "name": "@tabee/formats",
   "version": "0.1.0",
-  "description": "CDEP-proposed scientific data format identifiers and registry.",
+  "description": "tabEE-proposed scientific data format identifiers and registry.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -19,6 +19,6 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@cdep/protocol": "^0.1.0"
+    "@tabee/protocol": "^0.1.0"
   }
 }

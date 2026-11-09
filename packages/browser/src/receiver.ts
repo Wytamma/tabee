@@ -1,8 +1,8 @@
 import { CallOptions } from "penpal";
 import {
-  CdepException,
-  asCdepError,
-  cdepError,
+  TabeeException,
+  asTabeeError,
+  tabeeError,
   fail,
   isPlainObject,
   isTerminalState,
@@ -12,7 +12,7 @@ import {
   type AcceptAck,
   type CancelAck,
   type Capabilities,
-  type CdepError,
+  type TabeeError,
   type ImportContext,
   type ImportedBundle,
   type ImportedFile,
@@ -22,7 +22,7 @@ import {
   type Result,
   type TransferState,
   type TransferStatus,
-} from "@cdep/protocol";
+} from "@tabee/protocol";
 import { requestConsent, type ConsentOptions, type ConsentRequest } from "./consent.js";
 import { stripInvite, waitForHello } from "./handshake.js";
 import { checkOffer, checkTransfer } from "./receiver-policy.js";
@@ -48,7 +48,7 @@ export interface ReceiverSnapshot {
   datasetName: string;
   fileCount: number;
   formats: string[];
-  error?: CdepError;
+  error?: TabeeError;
 }
 
 export interface ReceiverOptions {
@@ -61,7 +61,7 @@ export interface ReceiverOptions {
   methodTimeoutMs: number;
   consent: ConsentOptions;
   onState?: (snapshot: ReceiverSnapshot) => void;
-  onError?: (error: CdepError) => void;
+  onError?: (error: TabeeError) => void;
 }
 
 export interface ReceiverSession {
@@ -74,7 +74,7 @@ interface TransferRecord {
   offer: Offer;
   state: TransferState;
   updatedAt: number;
-  error?: CdepError;
+  error?: TabeeError;
   receipt?: Receipt;
 }
 
@@ -201,7 +201,7 @@ export function startReceiverSession(
       }
       if (ack.value.transferId !== offer.transferId) {
         record.state = "FAILED";
-        record.error = cdepError("INTERNAL", "accept: transferId mismatch");
+        record.error = tabeeError("INTERNAL", "accept: transferId mismatch");
         record.updatedAt = Date.now();
         notify(record);
         return { ok: false, error: record.error };
@@ -303,7 +303,7 @@ export function startReceiverSession(
       }
     } catch (cause) {
       record.state = "FAILED";
-      record.error = asCdepError(cause, "IMPORT_FAILED");
+      record.error = asTabeeError(cause, "IMPORT_FAILED");
       record.updatedAt = Date.now();
       notify(record);
       return { ok: false, error: record.error };
@@ -370,7 +370,7 @@ export function startReceiverSession(
   async function run(): Promise<void> {
     const receiverWindow = globalThis.window;
     if (!receiverWindow) {
-      throw new CdepException(cdepError("INTERNAL", "CDEP receiving requires a browser window"));
+      throw new TabeeException(tabeeError("INTERNAL", "tabEE receiving requires a browser window"));
     }
     if (destroyed) return;
 
@@ -393,9 +393,9 @@ export function startReceiverSession(
 
   const started = run().catch((cause: unknown) => {
     options.onError?.(
-      cause instanceof CdepException
+      cause instanceof TabeeException
         ? cause.toJSON()
-        : toTransportError(cause, "The CDEP receiver failed"),
+        : toTransportError(cause, "The tabEE receiver failed"),
     );
   });
 

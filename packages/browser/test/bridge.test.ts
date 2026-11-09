@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { CdepException } from "@cdep/protocol";
+import { TabeeException } from "@tabee/protocol";
 import {
   CSV_V1,
   NEWICK_V1,
   normalizeFormatKey,
   registryCapability,
-} from "@cdep/formats";
+} from "@tabee/formats";
 import { createBridge } from "../src/bridge.js";
 
 const capabilitiesOf = (bridge: ReturnType<typeof createBridge>) => bridge.capabilities;
@@ -22,14 +22,14 @@ describe("createBridge", () => {
       imports: { fasta: () => undefined },
     });
 
-    expect(bridge.capabilities.protocol).toBe("cdep");
+    expect(bridge.capabilities.protocol).toBe("tabee");
     expect(bridge.capabilities.application).toEqual({ name: "Sequence App" });
     expect(bridge.capabilities.exports.map((capability) => capability.id).sort()).toEqual([
-      "org.cdep.format.fasta.v1",
-      "org.cdep.format.newick.v1",
+      "org.tabee.format.fasta.v1",
+      "org.tabee.format.newick.v1",
     ]);
     expect(bridge.capabilities.imports.map((capability) => capability.id)).toEqual([
-      "org.cdep.format.fasta.v1",
+      "org.tabee.format.fasta.v1",
     ]);
   });
 
@@ -37,7 +37,7 @@ describe("createBridge", () => {
     const bridge = createBridge({
       application: { name: "Tree Viewer" },
       maxBytes: 2048,
-      exports: { "org.cdep.format.newick.v1": () => ({ data: "(A,B);" }) },
+      exports: { "org.tabee.format.newick.v1": () => ({ data: "(A,B);" }) },
       importCapabilities: {
         [NEWICK_V1]: { label: "Newick", extensions: [".nwk"], maxBytes: 512 },
       },
@@ -72,11 +72,11 @@ describe("createBridge", () => {
           [NEWICK_V1]: () => ({ data: "" }),
         },
       }),
-    ).toThrow(CdepException);
+    ).toThrow(TabeeException);
   });
 
   it("rejects an empty application name", () => {
-    expect(() => createBridge({ application: { name: "" } })).toThrow(CdepException);
+    expect(() => createBridge({ application: { name: "" } })).toThrow(TabeeException);
   });
 
   it("exposes the CSV identifier without inventing a schema", () => {

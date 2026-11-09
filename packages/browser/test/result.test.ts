@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { ok, validateCapabilities, type Result } from "@cdep/protocol";
+import { ok, validateCapabilities, type Result } from "@tabee/protocol";
 import { readRemoteResult, toTransportError } from "../src/result.js";
 
 const capabilities = {
-  protocol: "cdep" as const,
+  protocol: "tabee" as const,
   version: 3 as const,
   application: { name: "Tree Viewer" },
-  imports: [{ id: "org.cdep.format.newick.v1" }],
+  imports: [{ id: "org.tabee.format.newick.v1" }],
   exports: [],
 };
 
@@ -16,7 +16,7 @@ describe("readRemoteResult", () => {
     expect(result.ok).toBe(true);
   });
 
-  it("preserves a well-formed remote CDEP error", () => {
+  it("preserves a well-formed remote tabEE error", () => {
     const result = readRemoteResult(
       { ok: false, error: { code: "SIZE_EXCEEDED", message: "too big", details: { maxBytes: 1 } } },
       validateCapabilities,
@@ -64,11 +64,11 @@ describe("toTransportError", () => {
     ["CONNECTION_DESTROYED", "CANCELLED"],
     ["METHOD_NOT_FOUND", "HANDSHAKE_FAILED"],
     ["TRANSMISSION_FAILED", "HANDSHAKE_FAILED"],
-  ])("maps Penpal's %s to %s", (penpalCode, cdepCode) => {
-    expect(toTransportError(penpalError(penpalCode), "ctx").code).toBe(cdepCode);
+  ])("maps Penpal's %s to %s", (penpalCode, tabeeCode) => {
+    expect(toTransportError(penpalError(penpalCode), "ctx").code).toBe(tabeeCode);
   });
 
-  it("keeps CDEP errors intact", () => {
+  it("keeps tabEE errors intact", () => {
     expect(toTransportError({ code: "REJECTED", message: "declined" }, "test")).toEqual({
       code: "REJECTED",
       message: "declined",

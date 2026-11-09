@@ -1,5 +1,5 @@
 {
-  "name": "@cdep/example-hello-sender",
+  "name": "@tabee/example-hello-sender",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cdep/browser": "^0.1.0",
-    "@cdep/protocol": "^0.1.0"
+    "@tabee/browser": "^0.1.0",
+    "@tabee/protocol": "^0.1.0"
   },
   "devDependencies": {
     "vite": "^6.0.0"

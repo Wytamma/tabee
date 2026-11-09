@@ -1,7 +1,7 @@
-import type { AcceptAck, CancelAck, Capabilities, Offer, OfferAck, Receipt, TransferRequest, Result, TransferStatus } from "@cdep/protocol";
+import type { AcceptAck, CancelAck, Capabilities, Offer, OfferAck, Receipt, TransferRequest, Result, TransferStatus } from "@tabee/protocol";
 
 /**
- * CDEP method surface. Declared as object types (not interfaces) so Penpal's
+ * tabEE method surface. Declared as object types (not interfaces) so Penpal's
  * `Methods` index-signature constraint accepts them.
  */
 export type ReceiverWire = {

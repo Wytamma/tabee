@@ -5,12 +5,12 @@ import {
 } from "../src/index.js";
 
 const valid: Capabilities = {
-  protocol: "cdep",
+  protocol: "tabee",
   version: 3,
   application: { name: "Tree Viewer", url: "https://treeviewer.example" },
   imports: [
     {
-      id: "org.cdep.format.newick.v1",
+      id: "org.tabee.format.newick.v1",
       label: "Newick",
       mediaTypes: ["text/plain"],
       extensions: [".nwk", ".newick"],
@@ -25,7 +25,7 @@ describe("validateCapabilities", () => {
     const result = validateCapabilities(valid);
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.value.imports[0]?.id).toBe("org.cdep.format.newick.v1");
+      expect(result.value.imports[0]?.id).toBe("org.tabee.format.newick.v1");
       expect(result.value.imports[0]?.maxBytes).toBe(10_485_760);
     }
   });
@@ -49,7 +49,7 @@ describe("validateCapabilities", () => {
 
   it.each([
     ["bare extension as id", { id: ".nwk" }],
-    ["uppercase id", { id: "org.cdep.format.Newick.v1" }],
+    ["uppercase id", { id: "org.tabee.format.Newick.v1" }],
     ["unversioned single segment", { id: "newick" }],
     ["empty id", { id: "" }],
   ])("rejects %s", (_name, patch) => {
@@ -77,7 +77,7 @@ describe("validateCapabilities", () => {
   it("rejects a zero byte ceiling", () => {
     const result = validateCapabilities({
       ...valid,
-      imports: [{ id: "org.cdep.format.newick.v1", maxBytes: 0 }],
+      imports: [{ id: "org.tabee.format.newick.v1", maxBytes: 0 }],
     });
     expect(result.ok).toBe(false);
   });
@@ -96,7 +96,7 @@ describe("validateCapabilities", () => {
   it.each([0, 17, 1.5])("rejects maxFiles %s", (maxFiles) => {
     const result = validateCapabilities({
       ...valid,
-      imports: [{ id: "org.cdep.format.newick.v1", maxFiles }],
+      imports: [{ id: "org.tabee.format.newick.v1", maxFiles }],
     });
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.code).toBe("CAPABILITIES_INVALID");
@@ -105,7 +105,7 @@ describe("validateCapabilities", () => {
   it("rejects a zero per-file ceiling", () => {
     const result = validateCapabilities({
       ...valid,
-      imports: [{ id: "org.cdep.format.newick.v1", maxFileBytes: 0 }],
+      imports: [{ id: "org.tabee.format.newick.v1", maxFileBytes: 0 }],
     });
     expect(result.ok).toBe(false);
   });

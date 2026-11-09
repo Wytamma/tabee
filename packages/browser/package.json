@@ -1,7 +1,7 @@
 {
-  "name": "@cdep/browser",
+  "name": "@tabee/browser",
   "version": "0.1.0",
-  "description": "Browser SDK for CDEP: Penpal transport, session handshake, consent, sender and receiver.",
+  "description": "Browser SDK for tabEE: Penpal transport, session handshake, consent, sender and receiver.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -19,7 +19,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@cdep/protocol": "^0.1.0",
+    "@tabee/protocol": "^0.1.0",
     "penpal": "^8.0.1"
   }
 }

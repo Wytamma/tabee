@@ -5,9 +5,9 @@ import {
   type FormatCapability,
 } from "../src/index.js";
 
-const NEWICK = "org.cdep.format.newick.v1";
-const FASTA = "org.cdep.format.fasta.v1";
-const CSV = "org.cdep.format.csv.v1";
+const NEWICK = "org.tabee.format.newick.v1";
+const FASTA = "org.tabee.format.fasta.v1";
+const CSV = "org.tabee.format.csv.v1";
 
 const exporter = (id: string, extra: Partial<FormatCapability> = {}): FormatCapability => ({
   id,
@@ -37,7 +37,7 @@ describe("negotiate", () => {
   });
 
   it("requires identical schemas when either side declares one", () => {
-    const schema = { id: "org.cdep.schema.metadata.v1", version: 1 };
+    const schema = { id: "org.tabee.schema.metadata.v1", version: 1 };
     const matched = negotiate(
       [{ id: CSV, schema }],
       [{ id: CSV, schema: { ...schema } }],

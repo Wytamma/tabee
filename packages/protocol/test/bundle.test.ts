@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import type { FormatCapability } from "../src/index.js";
 import { checkBundle } from "../src/index.js";
 
-const NEWICK = "org.cdep.format.newick.v1";
-const CSV = "org.cdep.format.csv.v1";
+const NEWICK = "org.tabee.format.newick.v1";
+const CSV = "org.tabee.format.csv.v1";
 
 const capabilities: FormatCapability[] = [
   { id: NEWICK, maxBytes: 512, maxFiles: 2, maxFileBytes: 300 },
@@ -42,7 +42,7 @@ describe("checkBundle", () => {
   });
 
   it("rejects an unknown format", () => {
-    const result = checkBundle([file("tree.bin", "org.cdep.format.bin.v1", 10)], {
+    const result = checkBundle([file("tree.bin", "org.tabee.format.bin.v1", 10)], {
       capabilities,
       maxBytes: 1024,
     });
@@ -55,12 +55,12 @@ describe("checkBundle", () => {
       [
         {
           ...file("metadata.csv", CSV, 10),
-          schema: { id: "org.cdep.schema.other.v1", version: 1 },
+          schema: { id: "org.tabee.schema.other.v1", version: 1 },
         },
       ],
       {
         capabilities: [
-          { id: CSV, schema: { id: "org.cdep.schema.tip-metadata.v1", version: 1 } },
+          { id: CSV, schema: { id: "org.tabee.schema.tip-metadata.v1", version: 1 } },
         ],
         maxBytes: 1024,
       },

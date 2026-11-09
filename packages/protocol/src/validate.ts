@@ -1,7 +1,7 @@
 /**
  * Dependency-free structural validation primitives.
  *
- * CDEP must validate everything arriving from the peer: a compromised or
+ * tabEE must validate everything arriving from the peer: a compromised or
  * hostile page can send any shape. These guards are the only thing standing
  * between the wire and the import adapters.
  */

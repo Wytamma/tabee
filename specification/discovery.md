@@ -1,7 +1,7 @@
 # Discovery and session bootstrap
 
 v0.3 uses runtime discovery over the message channel. There is no manifest, no
-directory, and no `/cdep/receiver.html` endpoint.
+directory, and no `/tabee/receiver.html` endpoint.
 
 ## 1. What the user supplies is the destination
 
@@ -11,7 +11,7 @@ to an origin root and no path is appended.
 That is deliberate. Static applications are commonly served below a path
 (`https://example.org/my-app/`, GitHub Pages project sites, previews). Any rule
 that derived a receiver URL from the origin would break them, and a convention
-such as `/cdep/receiver.html` would force every application to ship a second
+such as `/tabee/receiver.html` would force every application to ship a second
 HTML entry that cannot see the application's real state.
 
 Consequences:
@@ -34,13 +34,13 @@ application explicitly asks for one.
 The sender appends two parameters to the fragment:
 
 ```
-https://treeviewer.example/app#/tree/42  →  https://treeviewer.example/app#/tree/42&cdep=1&cdep-sid=<nonce>
+https://treeviewer.example/app#/tree/42  →  https://treeviewer.example/app#/tree/42&tabee=1&tabee-sid=<nonce>
 ```
 
 | Parameter  | Value                                             |
 | ---------- | ------------------------------------------------- |
-| `cdep`     | Literal `1`.                                      |
-| `cdep-sid` | 32 lowercase hex characters from `crypto.getRandomValues`. |
+| `tabee`     | Literal `1`.                                      |
+| `tabee-sid` | 32 lowercase hex characters from `crypto.getRandomValues`. |
 
 The fragment is used rather than the query string because it is never sent to
 the static host's server and does not appear in access logs or caches.
@@ -58,8 +58,8 @@ a query string is a claim. The bootstrap therefore uses raw `postMessage`:
 ```
 sender (origin A)                          receiver (origin B, target page)
 ────────────────────────────────────────────────────────────────────────────
-open(B#cdep=1&cdep-sid=N)
-postMessage({namespace:"cdep-handshake",
+open(B#tabee=1&tabee-sid=N)
+postMessage({namespace:"tabee-handshake",
              type:"hello", sid:N, version:1}, B)
                                             verify: event.source === window.opener
                                             verify: message namespace/type/version
@@ -70,7 +70,7 @@ postMessage({namespace:"cdep-handshake",
 verify: event.origin === origin(B)
 verify: event.source === receiver window
 verify: sid === N
-history.replaceState(remove cdep, cdep-sid)
+history.replaceState(remove tabee, tabee-sid)
 connect(channel = N, allowedOrigins = [B])  connect(channel = N, allowedOrigins = [origin])
 ```
 
@@ -103,7 +103,7 @@ and settles).
 | --- | --- |
 | Window blocked | `POPUP_BLOCKED` before any message is sent. |
 | Destination is not an allowed scheme/origin | `HTTPS_REQUIRED` / `TARGET_URL_INVALID`. |
-| Receiver page does not run CDEP | `HANDSHAKE_TIMEOUT` (sender gives up; receiver window closed). |
+| Receiver page does not run tabEE | `HANDSHAKE_TIMEOUT` (sender gives up; receiver window closed). |
 | COOP severs `window.opener` | Receiver reports `OPENER_UNAVAILABLE`; sender times out. |
 | Receiving tab navigates to another origin | Hello-ack origin mismatch; sender times out and never talks to the new origin. |
 | User closes the receiving tab | `POPUP_CLOSED` immediately. |
@@ -123,12 +123,12 @@ A different transport is conformant if it preserves:
 - ordered request/response semantics for the six protocol operations;
 - teardown that removes listeners when the session ends.
 
-Nothing in CDEP requires the `Result` envelope to travel inside Penpal messages;
+Nothing in tabEE requires the `Result` envelope to travel inside Penpal messages;
 only the shapes in [protocol.md](./protocol.md) are normative.
 
 ## 6. Deferred
 
-- A static `cdep.json` manifest naming the receiver URL and formats.
+- A static `tabee.json` manifest naming the receiver URL and formats.
 - An application directory or registry of participating sites.
 - iframe embedding (would avoid opening a separate tab but needs the receiving
   app to run in a nested browsing context and to accept third-party embedding).

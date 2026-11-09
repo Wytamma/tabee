@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  CdepException,
-  isCdepError,
+  TabeeException,
+  isTabeeError,
   payloadByteLength,
   toTransferableBuffer,
   unwrap,
@@ -72,14 +72,14 @@ describe("toTransferableBuffer", () => {
 });
 
 describe("errors", () => {
-  it("throws CdepException carrying the code and details", () => {
+  it("throws TabeeException carrying the code and details", () => {
     const result = failedResult({ code: "SIZE_EXCEEDED", message: "too big", details: { maxBytes: 1 } }, "SIZE_EXCEEDED");
     try {
       unwrap(result);
       expect.unreachable();
     } catch (error) {
-      expect(error).toBeInstanceOf(CdepException);
-      const exception = error as CdepException;
+      expect(error).toBeInstanceOf(TabeeException);
+      const exception = error as TabeeException;
       expect(exception.code).toBe("SIZE_EXCEEDED");
       expect(exception.toJSON()).toEqual({
         code: "SIZE_EXCEEDED",
@@ -90,10 +90,10 @@ describe("errors", () => {
   });
 
   it("recognizes only known error codes", () => {
-    expect(isCdepError({ code: "REJECTED", message: "no" })).toBe(true);
-    expect(isCdepError({ code: "NOT_A_CDEP_CODE", message: "no" })).toBe(false);
-    expect(isCdepError({ code: "REJECTED" })).toBe(false);
-    expect(isCdepError("REJECTED")).toBe(false);
+    expect(isTabeeError({ code: "REJECTED", message: "no" })).toBe(true);
+    expect(isTabeeError({ code: "NOT_A_tabEE_CODE", message: "no" })).toBe(false);
+    expect(isTabeeError({ code: "REJECTED" })).toBe(false);
+    expect(isTabeeError("REJECTED")).toBe(false);
   });
 
   it("maps arbitrary failures to a fallback code", () => {

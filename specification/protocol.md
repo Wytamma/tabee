@@ -1,6 +1,6 @@
-# CDEP protocol v0.3 (draft)
+# tabEE protocol v0.3 (draft)
 
-Status: draft, implemented by `@cdep/protocol` and `@cdep/browser`.
+Status: draft, implemented by `@tabee/protocol` and `@tabee/browser`.
 Scope: browser-to-browser dataset transfer between two web applications with no
 backend, no shared code, and no prior knowledge of each other.
 
@@ -21,21 +21,21 @@ the direction of the receiving window, not in capabilities.
 
 ## 2. Versioning
 
-A capabilities payload carries `protocol: "cdep"` and `version: 3`. A peer MUST
+A capabilities payload carries `protocol: "tabee"` and `version: 3`. A peer MUST
 reject any other protocol name (`PROTOCOL_MISMATCH`) or version
 (`VERSION_UNSUPPORTED`) before exchanging offers. Versions are not negotiated:
 an implementation either supports version 3 or refuses the session.
 
 ## 3. Envelope
 
-Every operation returns a `Result` envelope. CDEP methods never reject with a
+Every operation returns a `Result` envelope. tabEE methods never reject with a
 custom error type; transport failures are the only exceptions and MUST be mapped
-to a CDEP code by the local implementation.
+to a tabEE code by the local implementation.
 
 ```ts
 type Result<T> =
   | { ok: true; value: T }
-  | { ok: false; error: { code: CdepErrorCode; message: string; details?: object } };
+  | { ok: false; error: { code: TabeeErrorCode; message: string; details?: object } };
 ```
 
 `message` is for developers. Implementations MUST NOT inject it into HTML
@@ -45,7 +45,7 @@ unescaped. `details` is free-form and MAY be logged.
 
 ```ts
 interface Capabilities {
-  protocol: "cdep";
+  protocol: "tabee";
   version: 3;
   application: { name: string; url?: string };
   imports: FormatCapability[];
@@ -53,7 +53,7 @@ interface Capabilities {
 }
 
 interface FormatCapability {
-  id: string;              // e.g. org.cdep.format.newick.v1
+  id: string;              // e.g. org.tabee.format.newick.v1
   label?: string;          // display only
   mediaTypes?: string[];
   extensions?: string[];
@@ -221,8 +221,8 @@ MUST reject illegal transitions with `TRANSFER_STATE_INVALID`.
 | `HANDSHAKE_FAILED` | Channel could not be established or a method was missing. |
 | `HANDSHAKE_TIMEOUT` | No handshake or reply within the deadline. |
 | `ORIGIN_MISMATCH` | Claimed or observed origin violates the session. |
-| `PROTOCOL_MISMATCH` | Peer did not speak CDEP. |
-| `VERSION_UNSUPPORTED` | Peer speaks a different CDEP version. |
+| `PROTOCOL_MISMATCH` | Peer did not speak tabEE. |
+| `VERSION_UNSUPPORTED` | Peer speaks a different tabEE version. |
 | `CAPABILITIES_INVALID` | Capabilities failed schema validation. |
 | `NO_COMMON_FORMAT` | No exact format match. |
 | `AMBIGUOUS_FORMAT` | Several matches and no explicit choice. |

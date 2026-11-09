@@ -1,6 +1,6 @@
-import { createBridge } from "@cdep/browser";
-import { NEWICK_V1, normalizeFormatKey, registryCapability } from "@cdep/formats";
-import { CdepException } from "@cdep/protocol";
+import { createBridge } from "@tabee/browser";
+import { NEWICK_V1, normalizeFormatKey, registryCapability } from "@tabee/formats";
+import { TabeeException } from "@tabee/protocol";
 
 const DEMO_TREE = "((sample_1:0.12,sample_2:0.08):0.15,sample_3:0.21,sample_4:0.33);";
 
@@ -53,7 +53,7 @@ function setStatus(message: string, kind: "info" | "error" = "info"): void {
 }
 
 function describeError(error: unknown): string {
-  if (error instanceof CdepException) return `${error.code}: ${error.message}`;
+  if (error instanceof TabeeException) return `${error.code}: ${error.message}`;
   return error instanceof Error ? error.message : String(error);
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "@cdep/example-tree-viewer",
+  "name": "@tabee/example-tree-viewer",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cdep/browser": "^0.1.0",
-    "@cdep/formats": "^0.1.0",
-    "@cdep/protocol": "^0.1.0"
+    "@tabee/browser": "^0.1.0",
+    "@tabee/formats": "^0.1.0",
+    "@tabee/protocol": "^0.1.0"
   },
   "devDependencies": {
     "vite": "^6.0.0"

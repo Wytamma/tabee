@@ -1,15 +1,15 @@
 import {
-  CdepException,
+  TabeeException,
   fail,
-  isCdepError,
+  isTabeeError,
   isPlainObject,
-  type CdepError,
+  type TabeeError,
   type Result,
-} from "@cdep/protocol";
+} from "@tabee/protocol";
 
 /**
  * Responses cross an untrusted boundary: the peer may return anything. Every
- * response is unwrapped as a CDEP `Result` and its payload re-validated.
+ * response is unwrapped as a tabEE `Result` and its payload re-validated.
  */
 export function readRemoteResult<T>(
   value: unknown,
@@ -17,12 +17,12 @@ export function readRemoteResult<T>(
   context: string,
 ): Result<T> {
   if (!isPlainObject(value) || typeof value.ok !== "boolean") {
-    return fail("INTERNAL", `${context}: malformed CDEP response`);
+    return fail("INTERNAL", `${context}: malformed tabEE response`);
   }
   if (value.ok === false) {
-    return isCdepError(value.error)
+    return isTabeeError(value.error)
       ? { ok: false, error: value.error }
-      : fail("INTERNAL", `${context}: malformed CDEP error`);
+      : fail("INTERNAL", `${context}: malformed tabEE error`);
   }
   return validate(value.value);
 }
@@ -36,12 +36,12 @@ function penpalCode(error: unknown): string | undefined {
 }
 
 /**
- * Maps transport failures onto CDEP codes. Penpal's codes are an
+ * Maps transport failures onto tabEE codes. Penpal's codes are an
  * implementation detail and must never leak into the protocol surface.
  */
-export function toTransportError(error: unknown, context: string): CdepError {
-  if (error instanceof CdepException) return error.toJSON();
-  if (isCdepError(error)) return error;
+export function toTransportError(error: unknown, context: string): TabeeError {
+  if (error instanceof TabeeException) return error.toJSON();
+  if (isTabeeError(error)) return error;
 
   switch (penpalCode(error)) {
     case "CONNECTION_TIMEOUT":
@@ -52,7 +52,7 @@ export function toTransportError(error: unknown, context: string): CdepError {
     case "METHOD_NOT_FOUND":
       return {
         code: "HANDSHAKE_FAILED",
-        message: `${context}: the remote side does not implement the CDEP method`,
+        message: `${context}: the remote side does not implement the tabEE method`,
       };
     default:
       return {
@@ -62,6 +62,6 @@ export function toTransportError(error: unknown, context: string): CdepError {
   }
 }
 
-export function transportException(error: unknown, context: string): CdepException {
-  return new CdepException(toTransportError(error, context));
+export function transportException(error: unknown, context: string): TabeeException {
+  return new TabeeException(toTransportError(error, context));
 }

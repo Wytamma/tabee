@@ -1,10 +1,10 @@
 /**
- * CDEP error model.
+ * tabEE error model.
  *
  * Errors cross a message boundary, so they are plain serializable objects,
- * not Error instances. `CdepException` is the local, throwable counterpart.
+ * not Error instances. `TabeeException` is the local, throwable counterpart.
  */
-export const CDEP_ERROR_CODES = [
+export const tabEE_ERROR_CODES = [
   // Transport and session establishment.
   "TARGET_URL_INVALID",
   "HTTPS_REQUIRED",
@@ -37,39 +37,39 @@ export const CDEP_ERROR_CODES = [
   "INTERNAL",
 ] as const;
 
-export type CdepErrorCode = (typeof CDEP_ERROR_CODES)[number];
+export type TabeeErrorCode = (typeof tabEE_ERROR_CODES)[number];
 
-export interface CdepError {
-  code: CdepErrorCode;
+export interface TabeeError {
+  code: TabeeErrorCode;
   message: string;
   details?: Record<string, unknown>;
 }
 
-export type Result<T> = { ok: true; value: T } | { ok: false; error: CdepError };
+export type Result<T> = { ok: true; value: T } | { ok: false; error: TabeeError };
 
-export class CdepException extends Error {
-  readonly code: CdepErrorCode;
+export class TabeeException extends Error {
+  readonly code: TabeeErrorCode;
   readonly details: Record<string, unknown> | undefined;
 
-  constructor(error: CdepError) {
+  constructor(error: TabeeError) {
     super(error.message);
-    this.name = "CdepException";
+    this.name = "TabeeException";
     this.code = error.code;
     this.details = error.details;
   }
 
-  toJSON(): CdepError {
+  toJSON(): TabeeError {
     return this.details
       ? { code: this.code, message: this.message, details: this.details }
       : { code: this.code, message: this.message };
   }
 }
 
-export function cdepError(
-  code: CdepErrorCode,
+export function tabeeError(
+  code: TabeeErrorCode,
   message: string,
   details?: Record<string, unknown>,
-): CdepError {
+): TabeeError {
   return details ? { code, message, details } : { code, message };
 }
 
@@ -78,38 +78,38 @@ export function ok<T>(value: T): Result<T> {
 }
 
 export function fail(
-  code: CdepErrorCode,
+  code: TabeeErrorCode,
   message: string,
   details?: Record<string, unknown>,
 ): Result<never> {
-  return { ok: false, error: cdepError(code, message, details) };
+  return { ok: false, error: tabeeError(code, message, details) };
 }
 
-/** Returns the value or throws `CdepException`. Use at SDK boundaries only. */
+/** Returns the value or throws `TabeeException`. Use at SDK boundaries only. */
 export function unwrap<T>(result: Result<T>): T {
-  if (!result.ok) throw new CdepException(result.error);
+  if (!result.ok) throw new TabeeException(result.error);
   return result.value;
 }
 
-export function isCdepError(value: unknown): value is CdepError {
+export function isTabeeError(value: unknown): value is TabeeError {
   return (
     typeof value === "object" &&
     value !== null &&
-    typeof (value as CdepError).code === "string" &&
-    typeof (value as CdepError).message === "string" &&
-    (CDEP_ERROR_CODES as readonly string[]).includes((value as CdepError).code)
+    typeof (value as TabeeError).code === "string" &&
+    typeof (value as TabeeError).message === "string" &&
+    (tabEE_ERROR_CODES as readonly string[]).includes((value as TabeeError).code)
   );
 }
 
-export function asCdepError(error: unknown, fallback: CdepErrorCode = "INTERNAL"): CdepError {
-  if (isCdepError(error)) return error;
-  if (error instanceof CdepException) return error.toJSON();
+export function asTabeeError(error: unknown, fallback: TabeeErrorCode = "INTERNAL"): TabeeError {
+  if (isTabeeError(error)) return error;
+  if (error instanceof TabeeException) return error.toJSON();
   if (error instanceof Error) {
-    return cdepError(fallback, error.message || fallback);
+    return tabeeError(fallback, error.message || fallback);
   }
-  return cdepError(fallback, typeof error === "string" ? error : fallback);
+  return tabeeError(fallback, typeof error === "string" ? error : fallback);
 }
 
-export function failedResult(error: unknown, fallback: CdepErrorCode = "INTERNAL"): Result<never> {
-  return { ok: false, error: asCdepError(error, fallback) };
+export function failedResult(error: unknown, fallback: TabeeErrorCode = "INTERNAL"): Result<never> {
+  return { ok: false, error: asTabeeError(error, fallback) };
 }

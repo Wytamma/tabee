@@ -1,7 +1,7 @@
 /**
  * Minimal Newick reader/writer for the demo app.
  *
- * This is application code, deliberately outside the SDK: CDEP transports
+ * This is application code, deliberately outside the SDK: tabEE transports
  * bytes; it does not know what a phylogenetic tree is.
  */
 export interface TreeNode {

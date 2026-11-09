@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isFormatId } from "@cdep/protocol";
+import { isFormatId } from "@tabee/protocol";
 import {
   AUSPICE_V2,
   CSV_V1,
@@ -15,7 +15,7 @@ import {
 } from "../src/index.js";
 
 describe("format registry", () => {
-  it.each(FORMAT_REGISTRY)("$id is a valid CDEP format identifier", (definition) => {
+  it.each(FORMAT_REGISTRY)("$id is a valid tabEE format identifier", (definition) => {
     expect(isFormatId(definition.id)).toBe(true);
   });
 

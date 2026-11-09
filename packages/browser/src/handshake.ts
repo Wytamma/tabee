@@ -1,4 +1,4 @@
-import { CdepException, cdepError, isPlainObject, type CdepError } from "@cdep/protocol";
+import { TabeeException, tabeeError, isPlainObject, type TabeeError } from "@tabee/protocol";
 import { isSessionId } from "./ids.js";
 import { assertPeerOrigin } from "./policy.js";
 
@@ -11,9 +11,9 @@ import { assertPeerOrigin } from "./policy.js";
  * `MessageEvent.origin` and bound to `MessageEvent.source === window.opener`,
  * never from a query string or `document.referrer`.
  */
-export const HANDSHAKE_NAMESPACE = "cdep-handshake";
-export const INVITE_PARAM = "cdep";
-export const SID_PARAM = "cdep-sid";
+export const HANDSHAKE_NAMESPACE = "tabee-handshake";
+export const INVITE_PARAM = "tabee";
+export const SID_PARAM = "tabee-sid";
 
 export type HandshakeMessage =
   | { namespace: typeof HANDSHAKE_NAMESPACE; type: "hello"; sid: string; version: 1 }
@@ -88,7 +88,7 @@ export async function waitForHelloAck(options: HelloAckOptions): Promise<void> {
 
   let retry: ReturnType<typeof setInterval> | undefined;
   const timer = setTimeout(
-    () => fail(cdepError("HANDSHAKE_TIMEOUT", "The receiving application did not answer the CDEP handshake")),
+    () => fail(tabeeError("HANDSHAKE_TIMEOUT", "The receiving application did not answer the tabEE handshake")),
     options.timeoutMs,
   );
 
@@ -99,11 +99,11 @@ export async function waitForHelloAck(options: HelloAckOptions): Promise<void> {
     options.signal?.removeEventListener("abort", onAbort);
   };
 
-  const fail = (error: CdepError): void => {
+  const fail = (error: TabeeError): void => {
     if (settled) return;
     settled = true;
     stop();
-    reject(new CdepException(error));
+    reject(new TabeeException(error));
   };
 
   const succeed = (): void => {
@@ -122,7 +122,7 @@ export async function waitForHelloAck(options: HelloAckOptions): Promise<void> {
   }
 
   function onAbort(): void {
-    fail(cdepError("CANCELLED", "The transfer was cancelled"));
+    fail(tabeeError("CANCELLED", "The transfer was cancelled"));
   }
 
   senderWindow.addEventListener("message", onMessage);
@@ -135,7 +135,7 @@ export async function waitForHelloAck(options: HelloAckOptions): Promise<void> {
   const sendHello = (): void => {
     if (settled) return;
     if (options.receiverWindow.closed) {
-      fail(cdepError("POPUP_CLOSED", "The receiving window was closed before the handshake"));
+      fail(tabeeError("POPUP_CLOSED", "The receiving window was closed before the handshake"));
       return;
     }
     options.receiverWindow.postMessage(helloMessage(options.sid), options.expectedOrigin);
@@ -160,10 +160,10 @@ export async function waitForHello(options: HelloOptions): Promise<{ origin: str
   const receiverWindow = options.window ?? globalThis.window;
   const opener = receiverWindow.opener;
   if (!opener) {
-    throw new CdepException(
-      cdepError(
+    throw new TabeeException(
+      tabeeError(
         "OPENER_UNAVAILABLE",
-        "This window was not opened by a CDEP sender (or the opener was severed by COOP)",
+        "This window was not opened by a tabEE sender (or the opener was severed by COOP)",
       ),
     );
   }
@@ -172,7 +172,7 @@ export async function waitForHello(options: HelloOptions): Promise<{ origin: str
   let settled = false;
 
   const timer = setTimeout(
-    () => fail(cdepError("HANDSHAKE_TIMEOUT", "No CDEP sender completed the handshake")),
+    () => fail(tabeeError("HANDSHAKE_TIMEOUT", "No tabEE sender completed the handshake")),
     options.timeoutMs,
   );
 
@@ -181,11 +181,11 @@ export async function waitForHello(options: HelloOptions): Promise<{ origin: str
     receiverWindow.removeEventListener("message", onMessage);
   };
 
-  const fail = (error: CdepError): void => {
+  const fail = (error: TabeeError): void => {
     if (settled) return;
     settled = true;
     stop();
-    reject(new CdepException(error));
+    reject(new TabeeException(error));
   };
 
   function onMessage(event: MessageEvent): void {
@@ -197,7 +197,7 @@ export async function waitForHello(options: HelloOptions): Promise<{ origin: str
     try {
       origin = assertPeerOrigin(event.origin);
     } catch (error) {
-      fail(error instanceof CdepException ? error.toJSON() : cdepError("ORIGIN_MISMATCH", "Unusable peer origin"));
+      fail(error instanceof TabeeException ? error.toJSON() : tabeeError("ORIGIN_MISMATCH", "Unusable peer origin"));
       return;
     }
 

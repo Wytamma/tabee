@@ -6,9 +6,9 @@ const here = (path: string) => fileURLToPath(new URL(path, import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      "@cdep/protocol": here("./packages/protocol/src/index.ts"),
-      "@cdep/formats": here("./packages/formats/src/index.ts"),
-      "@cdep/browser": here("./packages/browser/src/index.ts"),
+      "@tabee/protocol": here("./packages/protocol/src/index.ts"),
+      "@tabee/formats": here("./packages/formats/src/index.ts"),
+      "@tabee/browser": here("./packages/browser/src/index.ts"),
     },
   },
   test: {

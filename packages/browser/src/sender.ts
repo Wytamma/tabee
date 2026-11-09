@@ -1,8 +1,8 @@
 import { CallOptions } from "penpal";
 import {
-  CdepException,
+  TabeeException,
   checkBundle,
-  cdepError,
+  tabeeError,
   fail,
   isPlainObject,
   negotiate,
@@ -16,13 +16,13 @@ import {
   validateOffer,
   type AcceptAck,
   type Capabilities,
-  type CdepError,
+  type TabeeError,
   type ExportValue,
   type Offer,
   type OfferAck,
   type Receipt,
   type Result,
-} from "@cdep/protocol";
+} from "@tabee/protocol";
 import { createInviteUrl, waitForHelloAck } from "./handshake.js";
 import { randomId } from "./ids.js";
 import { assertTransferTarget } from "./policy.js";
@@ -62,19 +62,19 @@ export interface SenderRun {
 export async function sendDataset(run: SenderRun): Promise<Receipt> {
   const target = assertTransferTarget(run.targetUrl);
   if (run.signal?.aborted) {
-    throw new CdepException(cdepError("CANCELLED", "The transfer was cancelled before it started"));
+    throw new TabeeException(tabeeError("CANCELLED", "The transfer was cancelled before it started"));
   }
 
   const senderWindow = globalThis.window;
   if (!senderWindow) {
-    throw new CdepException(cdepError("INTERNAL", "CDEP transfers require a browser window"));
+    throw new TabeeException(tabeeError("INTERNAL", "tabEE transfers require a browser window"));
   }
 
   const sid = randomId();
-  const receiverWindow = senderWindow.open(createInviteUrl(target, sid), `cdep-${sid}`);
+  const receiverWindow = senderWindow.open(createInviteUrl(target, sid), `tabee-${sid}`);
   if (!receiverWindow) {
-    throw new CdepException(
-      cdepError("POPUP_BLOCKED", "The browser blocked the CDEP receiving window", {
+    throw new TabeeException(
+      tabeeError("POPUP_BLOCKED", "The browser blocked the tabEE receiving window", {
         target: target.origin,
       }),
     );
@@ -133,7 +133,7 @@ export async function sendDataset(run: SenderRun): Promise<Receipt> {
       validateCapabilities,
       "getCapabilities",
     );
-    if (!capabilitiesResult.ok) throw new CdepException(capabilitiesResult.error);
+    if (!capabilitiesResult.ok) throw new TabeeException(capabilitiesResult.error);
     const remoteCapabilities = capabilitiesResult.value;
 
     let exported: ExportValue;
@@ -145,17 +145,17 @@ export async function sendDataset(run: SenderRun): Promise<Receipt> {
           ? {}
           : { requestedFormat: run.selection.format }),
       });
-      if (!matches.ok) throw new CdepException(matches.error);
+      if (!matches.ok) throw new TabeeException(matches.error);
       const chosen = selectMatch(matches.value);
-      if (!chosen.ok) throw new CdepException(chosen.error);
+      if (!chosen.ok) throw new TabeeException(chosen.error);
       exported = await run.exportFor({ format: chosen.value.formatId });
     }
 
     const prepared = exported.files.map((file) => {
       const formatId = file.formatId;
       if (formatId === undefined) {
-        throw new CdepException(
-          cdepError("INTERNAL", "The export adapter returned a file without a format"),
+        throw new TabeeException(
+          tabeeError("INTERNAL", "The export adapter returned a file without a format"),
         );
       }
       const payload = toTransferableBuffer(file.data);
@@ -180,14 +180,14 @@ export async function sendDataset(run: SenderRun): Promise<Receipt> {
       })),
       { capabilities: remoteCapabilities.imports, maxBytes: run.maxBytes },
     );
-    if (!checked.ok) throw new CdepException(checked.error);
+    if (!checked.ok) throw new TabeeException(checked.error);
 
     const issuedAt = Date.now();
     offer = {
       offerId: randomId(),
       transferId: randomId(),
       dataset: {
-        name: exported.name ?? "CDEP bundle",
+        name: exported.name ?? "tabEE bundle",
         sizeBytes: checked.value.totalBytes,
         files: prepared.map((file) => ({
           name: file.name,
@@ -204,7 +204,7 @@ export async function sendDataset(run: SenderRun): Promise<Receipt> {
     };
     const proposed = offer;
     const selfCheck = validateOffer(proposed);
-    if (!selfCheck.ok) throw new CdepException(selfCheck.error);
+    if (!selfCheck.ok) throw new TabeeException(selfCheck.error);
 
     stopWatch = watchSession({
       receiverWindow,
@@ -221,10 +221,10 @@ export async function sendDataset(run: SenderRun): Promise<Receipt> {
       (value) => validateOfferAck(value, proposed),
       "offer",
     );
-    if (!offered.ok) throw new CdepException(offered.error);
+    if (!offered.ok) throw new TabeeException(offered.error);
 
     const outcome = await decision.promise;
-    if (!outcome.ok) throw new CdepException(outcome.error);
+    if (!outcome.ok) throw new TabeeException(outcome.error);
     stopWatch();
     stopWatch = undefined;
 
@@ -249,13 +249,13 @@ export async function sendDataset(run: SenderRun): Promise<Receipt> {
       (value) => validateReceipt(value, proposed),
       "transfer",
     );
-    if (!receipt.ok) throw new CdepException(receipt.error);
+    if (!receipt.ok) throw new TabeeException(receipt.error);
 
     // The receiving tab stays open: it now owns the imported dataset.
     return receipt.value;
   } catch (cause) {
     receiverWindow.close();
-    throw cause instanceof CdepException ? cause : transportException(cause, "The transfer failed");
+    throw cause instanceof TabeeException ? cause : transportException(cause, "The transfer failed");
   } finally {
     stopWatch?.();
     transport?.destroy();
@@ -266,7 +266,7 @@ interface SessionWatchOptions {
   receiverWindow: Window;
   signal?: AbortSignal;
   timeoutMs: number;
-  onFailure: (error: CdepError) => void;
+  onFailure: (error: TabeeError) => void;
 }
 
 /**
@@ -286,23 +286,23 @@ function watchSession(options: SessionWatchOptions): () => void {
     options.signal?.removeEventListener("abort", onAbort);
   };
 
-  const failWith = (error: CdepError): void => {
+  const failWith = (error: TabeeError): void => {
     if (stopped) return;
     stop();
     options.onFailure(error);
   };
 
   function onAbort(): void {
-    failWith(cdepError("CANCELLED", "The transfer was cancelled"));
+    failWith(tabeeError("CANCELLED", "The transfer was cancelled"));
   }
 
   interval = setInterval(() => {
     if (options.receiverWindow.closed) {
-      failWith(cdepError("POPUP_CLOSED", "The receiving window was closed"));
+      failWith(tabeeError("POPUP_CLOSED", "The receiving window was closed"));
     }
   }, 250);
   timer = setTimeout(
-    () => failWith(cdepError("TIMED_OUT", "The offer expired before a decision was made")),
+    () => failWith(tabeeError("TIMED_OUT", "The offer expired before a decision was made")),
     options.timeoutMs,
   );
 

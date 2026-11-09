@@ -17,25 +17,25 @@ async function sendFromNewickSender(page: Page, url = SENDER): Promise<Page> {
 test("transfers a Newick tree across origins after explicit approval", async ({ page }) => {
   const receiver = await sendFromNewickSender(page);
 
-  await expect(receiver.locator("[data-cdep-consent] h2")).toHaveText("Incoming dataset");
+  await expect(receiver.locator("[data-tabee-consent] h2")).toHaveText("Incoming dataset");
   await expect(receiver.locator("#leaves")).toHaveText("No tree");
   expect(await receiver.evaluate(() => window.opener !== null)).toBe(true);
   await expect(
-    receiver.locator("[data-cdep-consent] dd").filter({ hasText: "http://127.0.0.1:5181" }),
+    receiver.locator("[data-tabee-consent] dd").filter({ hasText: "http://127.0.0.1:5181" }),
   ).toHaveCount(1);
-  await expect(receiver.locator("[data-cdep-consent] dd").filter({ hasText: "tree.newick" })).toHaveCount(1);
+  await expect(receiver.locator("[data-tabee-consent] dd").filter({ hasText: "tree.newick" })).toHaveCount(1);
 
-  await receiver.locator("[data-cdep-consent] button.accept").click();
+  await receiver.locator("[data-tabee-consent] button.accept").click();
 
   await expect(receiver.locator("#leaves")).toHaveAttribute("data-count", "4");
   await expect(receiver.locator("#session")).toHaveAttribute("data-state", "IMPORTED");
   await expect(receiver.locator("#source")).toContainText("http://127.0.0.1:5181");
 
   await expect(page.locator("#status")).toContainText("Imported");
-  await expect(page.locator("#status")).toContainText("org.cdep.format.newick.v1");
+  await expect(page.locator("#status")).toContainText("org.tabee.format.newick.v1");
 
   // The invite nonce is single-use and must not survive the handshake.
-  expect(receiver.url()).not.toContain("cdep-sid");
+  expect(receiver.url()).not.toContain("tabee-sid");
   expect(new URL(receiver.url()).origin).toBe("http://localhost:5182");
   expect(receiver.isClosed()).toBe(false);
 });
@@ -43,7 +43,7 @@ test("transfers a Newick tree across origins after explicit approval", async ({ 
 test("a declined offer ends the transfer without importing anything", async ({ page }) => {
   const receiver = await sendFromNewickSender(page);
 
-  await receiver.locator("[data-cdep-consent] button.decline").click();
+  await receiver.locator("[data-tabee-consent] button.decline").click();
 
   await expect(page.locator("#status")).toContainText("REJECTED");
   await expect(page.locator("#status")).toHaveAttribute("data-kind", "error");
@@ -62,7 +62,7 @@ test("the sender's edited Newick draft is what the receiver imports", async ({ p
   await page.locator("#send").click();
   const receiver = await receiverPage;
   await receiver.waitForLoadState("domcontentloaded").catch(() => undefined);
-  await receiver.locator("[data-cdep-consent] button.accept").click();
+  await receiver.locator("[data-tabee-consent] button.accept").click();
 
   await expect(receiver.locator("#leaves")).toHaveAttribute("data-count", "4");
   await expect(receiver.locator("#tree text").filter({ hasText: "edited_leaf" })).toHaveCount(1);

@@ -4,18 +4,18 @@ import type {
   DatasetFileDescriptor,
   Offer,
   TransferState,
-} from "@cdep/protocol";
+} from "@tabee/protocol";
 import { checkOffer, checkTransfer } from "../src/receiver-policy.js";
 
 const NOW = Date.UTC(2026, 0, 1, 12, 0, 0);
-const NEWICK = "org.cdep.format.newick.v1";
-const CSV = "org.cdep.format.csv.v1";
+const NEWICK = "org.tabee.format.newick.v1";
+const CSV = "org.tabee.format.csv.v1";
 const MAX = 2048;
 const TEXT = "((A,B),C);";
 const CSV_TEXT = "name,length";
 
 const capabilities: Capabilities = {
-  protocol: "cdep",
+  protocol: "tabee",
   version: 3,
   application: { name: "Tree Viewer" },
   imports: [
@@ -130,7 +130,7 @@ describe("checkOffer", () => {
   });
 
   it("rejects a format with no registered adapter", () => {
-    const result = checkOffer(offerWith([file("data.bin", "org.cdep.format.bin.v1", 10)]), offerContext());
+    const result = checkOffer(offerWith([file("data.bin", "org.tabee.format.bin.v1", 10)]), offerContext());
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error.code).toBe("NO_COMMON_FORMAT");
   });

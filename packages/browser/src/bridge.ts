@@ -1,5 +1,5 @@
 import {
-  CdepException,
+  TabeeException,
   DEFAULT_CONNECT_TIMEOUT_MS,
   DEFAULT_HANDSHAKE_TIMEOUT_MS,
   DEFAULT_MAX_BYTES,
@@ -8,19 +8,19 @@ import {
   PROTOCOL,
   PROTOCOL_VERSION,
   assertLocalCapabilities,
-  cdepError,
+  tabeeError,
   isFormatId,
   isPlainObject,
   normalizeJson,
   type Capabilities,
-  type CdepError,
+  type TabeeError,
   type ExportFile,
   type ExportValue,
   type FormatCapability,
   type JsonValue,
   type Receipt,
   type SchemaRef,
-} from "@cdep/protocol";
+} from "@tabee/protocol";
 import type { ConsentOptions } from "./consent.js";
 import { parseInvite } from "./handshake.js";
 import {
@@ -66,7 +66,7 @@ export interface BridgeOptions {
   methodTimeoutMs?: number;
   onTransferRequest?: ConsentOptions["onTransferRequest"];
   onState?: (snapshot: ReceiverSnapshot) => void;
-  onError?: (error: CdepError) => void;
+  onError?: (error: TabeeError) => void;
 }
 
 export interface SendOptions {
@@ -79,7 +79,7 @@ export interface SendOptions {
 
 export interface Bridge {
   readonly capabilities: Capabilities;
-  /** Present only when this page was opened as a CDEP receiver. */
+  /** Present only when this page was opened as a tabEE receiver. */
   readonly receiver: ReceiverSession | undefined;
   sendTo(targetUrl: string, options?: SendOptions): Promise<Receipt>;
   destroy(): void;
@@ -128,8 +128,8 @@ export function createBridge(options: BridgeOptions): Bridge {
     receiver,
     async sendTo(targetUrl, sendOptions = {}) {
       if (sendOptions.format !== undefined && sendOptions.bundle !== undefined) {
-        throw new CdepException(
-          cdepError("INTERNAL", "sendTo accepts either format or bundle, not both"),
+        throw new TabeeException(
+          tabeeError("INTERNAL", "sendTo accepts either format or bundle, not both"),
         );
       }
 
@@ -141,8 +141,8 @@ export function createBridge(options: BridgeOptions): Bridge {
             : { format: normalizeKey(sendOptions.format) };
 
       if (selection.bundle !== undefined && bundleHandlers[selection.bundle] === undefined) {
-        throw new CdepException(
-          cdepError("INTERNAL", `Unknown bundle export "${selection.bundle}"`),
+        throw new TabeeException(
+          tabeeError("INTERNAL", `Unknown bundle export "${selection.bundle}"`),
         );
       }
 
@@ -161,8 +161,8 @@ export function createBridge(options: BridgeOptions): Bridge {
           if (resolved.bundle !== undefined) {
             const handler = bundleHandlers[resolved.bundle];
             if (!handler) {
-              throw new CdepException(
-                cdepError("INTERNAL", `Unknown bundle export "${resolved.bundle}"`),
+              throw new TabeeException(
+                tabeeError("INTERNAL", `Unknown bundle export "${resolved.bundle}"`),
               );
             }
             return normalizeExport(await handler(), { capabilities });
@@ -170,14 +170,14 @@ export function createBridge(options: BridgeOptions): Bridge {
 
           const formatId = resolved.format;
           if (formatId === undefined) {
-            throw new CdepException(
-              cdepError("INTERNAL", "A format selection is required for a single-format send"),
+            throw new TabeeException(
+              tabeeError("INTERNAL", "A format selection is required for a single-format send"),
             );
           }
           const handler = exportHandlers[formatId];
           if (!handler) {
-            throw new CdepException(
-              cdepError("NO_COMMON_FORMAT", `No export adapter is registered for ${formatId}`),
+            throw new TabeeException(
+              tabeeError("NO_COMMON_FORMAT", `No export adapter is registered for ${formatId}`),
             );
           }
           return normalizeExport(await handler(), { capabilities, formatId });
@@ -199,8 +199,8 @@ function normalizeHandlers<T>(
   for (const [key, handler] of Object.entries(handlers)) {
     const id = normalizeKey(key);
     if (normalized[id] !== undefined) {
-      throw new CdepException(
-        cdepError("CAPABILITIES_INVALID", `Two ${direction} adapters resolve to ${id}`),
+      throw new TabeeException(
+        tabeeError("CAPABILITIES_INVALID", `Two ${direction} adapters resolve to ${id}`),
       );
     }
     normalized[id] = handler;
@@ -242,8 +242,8 @@ function isExportData(value: unknown): value is string | ArrayBuffer | Uint8Arra
 function readSchema(value: unknown, formatId: string): SchemaRef | undefined {
   if (value === undefined) return undefined;
   if (!isPlainObject(value)) {
-    throw new CdepException(
-      cdepError("INTERNAL", `The export adapter for ${formatId} returned an invalid schema`),
+    throw new TabeeException(
+      tabeeError("INTERNAL", `The export adapter for ${formatId} returned an invalid schema`),
     );
   }
   const id = value.id;
@@ -254,8 +254,8 @@ function readSchema(value: unknown, formatId: string): SchemaRef | undefined {
     !Number.isSafeInteger(version) ||
     version <= 0
   ) {
-    throw new CdepException(
-      cdepError("INTERNAL", `The export adapter for ${formatId} returned an invalid schema`),
+    throw new TabeeException(
+      tabeeError("INTERNAL", `The export adapter for ${formatId} returned an invalid schema`),
     );
   }
   return { id, version };
@@ -266,8 +266,8 @@ function normalizeExport(
   context: { capabilities: Capabilities; formatId?: string },
 ): ExportValue {
   if (typeof value !== "object" || value === null) {
-    throw new CdepException(
-      cdepError("INTERNAL", "The export adapter must return an object"),
+    throw new TabeeException(
+      tabeeError("INTERNAL", "The export adapter must return an object"),
     );
   }
 
@@ -277,8 +277,8 @@ function normalizeExport(
     fileValues.length === 0 ||
     fileValues.length > MAX_BUNDLE_FILES
   ) {
-    throw new CdepException(
-      cdepError(
+    throw new TabeeException(
+      tabeeError(
         "INTERNAL",
         `Export adapters must return between 1 and ${MAX_BUNDLE_FILES} files`,
       ),
@@ -290,21 +290,21 @@ function normalizeExport(
   for (let index = 0; index < fileValues.length; index += 1) {
     const entry: unknown = fileValues[index];
     if (!isPlainObject(entry)) {
-      throw new CdepException(cdepError("INTERNAL", "An export file must be an object"));
+      throw new TabeeException(tabeeError("INTERNAL", "An export file must be an object"));
     }
     const name = entry.name;
     if (!isSafeName(name)) {
-      throw new CdepException(cdepError("INTERNAL", "An export file has an invalid name"));
+      throw new TabeeException(tabeeError("INTERNAL", "An export file has an invalid name"));
     }
     if (names.has(name)) {
-      throw new CdepException(cdepError("INTERNAL", `Duplicate export file "${name}"`));
+      throw new TabeeException(tabeeError("INTERNAL", `Duplicate export file "${name}"`));
     }
     names.add(name);
 
     const formatId = entry.formatId ?? context.formatId;
     if (!isFormatId(formatId)) {
-      throw new CdepException(
-        cdepError(
+      throw new TabeeException(
+        tabeeError(
           "INTERNAL",
           "Every export file in a bundle must declare a valid formatId",
         ),
@@ -314,22 +314,22 @@ function normalizeExport(
       (candidate) => candidate.id === formatId,
     );
     if (!capability) {
-      throw new CdepException(
-        cdepError("INTERNAL", `The export adapter produced undeclared format ${formatId}`),
+      throw new TabeeException(
+        tabeeError("INTERNAL", `The export adapter produced undeclared format ${formatId}`),
       );
     }
 
     const data = entry.data;
     if (!isExportData(data)) {
-      throw new CdepException(
-        cdepError("INTERNAL", `The export adapter for ${formatId} returned invalid data`),
+      throw new TabeeException(
+        tabeeError("INTERNAL", `The export adapter for ${formatId} returned invalid data`),
       );
     }
 
     const mediaTypeValue = entry.mediaType;
     if (mediaTypeValue !== undefined && !isSafeName(mediaTypeValue)) {
-      throw new CdepException(
-        cdepError("INTERNAL", `The export adapter for ${formatId} returned an invalid media type`),
+      throw new TabeeException(
+        tabeeError("INTERNAL", `The export adapter for ${formatId} returned an invalid media type`),
       );
     }
     const mediaType = mediaTypeValue ?? capability.mediaTypes?.[0];
@@ -339,8 +339,8 @@ function normalizeExport(
     if (entry.metadata !== undefined) {
       const normalized = normalizeJson(entry.metadata);
       if (!normalized.ok) {
-        throw new CdepException(
-          cdepError(
+        throw new TabeeException(
+          tabeeError(
             "INTERNAL",
             `The export adapter for ${formatId} returned invalid metadata: ${normalized.reason}`,
           ),
@@ -361,8 +361,8 @@ function normalizeExport(
 
   const name = value.name;
   if (name !== undefined && !isSafeName(name)) {
-    throw new CdepException(
-      cdepError("INTERNAL", "The export adapter returned an invalid bundle name"),
+    throw new TabeeException(
+      tabeeError("INTERNAL", "The export adapter returned an invalid bundle name"),
     );
   }
 
@@ -372,7 +372,7 @@ function normalizeExport(
       : capabilitiesById(context.capabilities).get(context.formatId);
   const fallbackName =
     context.formatId === undefined
-      ? "CDEP bundle"
+      ? "tabEE bundle"
       : `${capability?.label ?? context.formatId} bundle`;
 
   return { name: name ?? fallbackName, files };

@@ -1,8 +1,8 @@
 {
-  "name": "cdep",
+  "name": "tabee",
   "version": "0.1.0",
   "private": true,
-  "description": "Client Data Exchange Protocol: capability discovery and user-approved dataset transfer between browser applications, with no backend.",
+  "description": "tabEE — the tab exchange engine: capability discovery and user-approved dataset transfer between browser applications, with no backend.",
   "license": "MIT",
   "type": "module",
   "packageManager": "npm@10.9.2",
@@ -11,7 +11,7 @@
   },
   "workspaces": ["packages/*", "examples/*"],
   "scripts": {
-    "build": "npm run build -w @cdep/protocol && npm run build -w @cdep/formats && npm run build -w @cdep/browser",
+    "build": "npm run build -w @tabee/protocol && npm run build -w @tabee/formats && npm run build -w @tabee/browser",
     "typecheck": "npm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/newick-sender/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit && tsc -p examples/hello-sender/tsconfig.json --noEmit && tsc -p examples/hello-receiver/tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

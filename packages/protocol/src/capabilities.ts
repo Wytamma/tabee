@@ -1,4 +1,4 @@
-import { CdepException, fail, ok, type Result } from "./errors.js";
+import { TabeeException, fail, ok, type Result } from "./errors.js";
 import {
   MAX_BUNDLE_FILES,
   PROTOCOL,
@@ -57,7 +57,7 @@ function readFormatCapability(
   if (isFormatId(value.id)) {
     capability.id = value.id;
   } else {
-    issues.add(`${path}.id`, "expected a namespaced lowercase identifier, e.g. org.cdep.format.newick.v1");
+    issues.add(`${path}.id`, "expected a namespaced lowercase identifier, e.g. org.tabee.format.newick.v1");
   }
 
   if (value.label !== undefined) {
@@ -214,7 +214,7 @@ export function findImportCapability(
 export function assertLocalCapabilities(capabilities: unknown): Capabilities {
   const result = validateCapabilities(capabilities);
   if (!result.ok) {
-    throw new CdepException(result.error);
+    throw new TabeeException(result.error);
   }
   return result.value;
 }

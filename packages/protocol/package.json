@@ -1,7 +1,7 @@
 {
-  "name": "@cdep/protocol",
+  "name": "@tabee/protocol",
   "version": "0.1.0",
-  "description": "CDEP wire types, validation, negotiation and transfer state machine.",
+  "description": "tabEE wire types, validation, negotiation and transfer state machine.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,

@@ -1,4 +1,4 @@
-# CDEP — Client Data Exchange Protocol
+# tabEE — the tab exchange engine
 
 Capability discovery, user-approved dataset transfer, and receipts between two
 browser applications. No backend, no shared code, no prior knowledge of each
@@ -14,7 +14,7 @@ per-file formats and mixed-format bundles; wire version 3 peers only.
 Newick Sender (origin A)                       Tree Viewer (origin B)
 ──────────────────────                         ──────────────────────
 sendTo("http://localhost:5182/", { format: "newick" })
-  ├─ open B with #cdep=1&cdep-sid=<nonce>
+  ├─ open B with #tabee=1&tabee-sid=<nonce>
   ├─ raw postMessage hello/hello-ack      →    verify source === opener
   │                                            take origin from event.origin
   │                                            strip nonce, connect
@@ -27,7 +27,7 @@ sendTo("http://localhost:5182/", { format: "newick" })
   └─ Receipt {formats, fileCount, bytes}  ←
 ```
 
-Penpal carries the calls; CDEP owns discovery, negotiation, consent, validation,
+Penpal carries the calls; tabEE owns discovery, negotiation, consent, validation,
 lifecycle, and error codes. Another stack can implement the same protocol over
 raw `postMessage`.
 
@@ -52,8 +52,8 @@ tests/e2e           Playwright, two loopback origins, three engines
 ## Quick start
 
 ```ts
-import { createBridge } from "@cdep/browser";
-import { NEWICK_V1, normalizeFormatKey, registryCapability } from "@cdep/formats";
+import { createBridge } from "@tabee/browser";
+import { NEWICK_V1, normalizeFormatKey, registryCapability } from "@tabee/formats";
 
 const bridge = createBridge({
   application: { name: "Tree Viewer" },
@@ -77,7 +77,7 @@ const bridge = createBridge({
 await bridge.sendTo("https://treeviewer.example/app", { format: "newick" });
 ```
 
-A page opened with `#cdep=1&cdep-sid=…` starts the receiver automatically; the
+A page opened with `#tabee=1&tabee-sid=…` starts the receiver automatically; the
 application page itself is the receiver, so adapters see real application state.
 No extra HTML entry is required.
 
@@ -90,14 +90,14 @@ No extra HTML entry is required.
 | `bundles` | Named mixed-format exports; each file declares its own `formatId`. |
 | `importBundle` | Receives a whole bundle; required for bundles that mix formats. |
 | `importCapabilities` / `exportCapabilities` | Optional per-format limits, labels, schemas. |
-| `normalizeFormatKey` | Maps aliases to identifiers (pass `normalizeFormatKey` from `@cdep/formats`). |
+| `normalizeFormatKey` | Maps aliases to identifiers (pass `normalizeFormatKey` from `@tabee/formats`). |
 | `maxBytes` | Absolute ceiling for what this app sends or accepts (default 10 MB). |
 | `onTransferRequest` | Replace the built-in consent dialog. Must show the same facts; anything but `true` declines. |
 | `onState` / `onError` | Receiver progress and failure reporting for the app's UI. |
 | `handshakeTimeoutMs`, `connectTimeoutMs`, `offerTtlMs`, `methodTimeoutMs` | Deadlines. |
 
 Returns `{capabilities, receiver, sendTo, destroy}`. `sendTo` throws a
-`CdepException` carrying a protocol `code` and optional `details`; it resolves
+`TabeeException` carrying a protocol `code` and optional `details`; it resolves
 with a `Receipt` only after the receiver imported the dataset.
 
 Sender-side ambiguity is an error, not a guess: with several compatible formats
@@ -161,10 +161,10 @@ identifiers, so a bundle id is purely a sender-side label.
 ```sh
 npm install
 npm run build            # packages emit dist/; the demos import it
-npm run dev -w @cdep/example-newick-sender    # http://127.0.0.1:5181
-npm run dev -w @cdep/example-tree-viewer      # http://localhost:5182
-npm run dev -w @cdep/example-hello-sender     # http://localhost:5185
-npm run dev -w @cdep/example-hello-receiver   # http://localhost:5186
+npm run dev -w @tabee/example-newick-sender    # http://127.0.0.1:5181
+npm run dev -w @tabee/example-tree-viewer      # http://localhost:5182
+npm run dev -w @tabee/example-hello-sender     # http://localhost:5185
+npm run dev -w @tabee/example-hello-receiver   # http://localhost:5186
 ```
 
 Different hostnames and ports, so every demo transfer is cross-origin. Static
@@ -172,12 +172,12 @@ hosting is enough; nothing talks to a server.
 
 Newick Sender's textarea is what gets exported. Its check is structural only —
 Tree Viewer performs the real parse — which is exactly the division of
-responsibility CDEP assumes. An obviously malformed draft is refused before a
+responsibility tabEE assumes. An obviously malformed draft is refused before a
 window opens.
 
 Tree Viewer is a pure receiver: it imports Newick, renders the cladogram, and
 shows the sender origin, file count, and leaf count. It has no export, bundle,
-or file-upload path; every tree it displays arrived through CDEP.
+or file-upload path; every tree it displays arrived through tabEE.
 
 The hello pair is the smallest complete exchange: a private identifier
 (`org.example.format.text.v1`), one export adapter, one import adapter, and no

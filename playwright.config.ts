@@ -21,13 +21,13 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: "npm run dev -w @cdep/example-newick-sender",
+      command: "npm run dev -w @tabee/example-newick-sender",
       url: "http://127.0.0.1:5181/",
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
     },
     {
-      command: "npm run dev -w @cdep/example-tree-viewer",
+      command: "npm run dev -w @tabee/example-tree-viewer",
       url: "http://localhost:5182/",
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,

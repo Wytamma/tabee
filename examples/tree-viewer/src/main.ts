@@ -1,5 +1,5 @@
-import { createBridge } from "@cdep/browser";
-import { NEWICK_V1, normalizeFormatKey, registryCapability } from "@cdep/formats";
+import { createBridge } from "@tabee/browser";
+import { NEWICK_V1, normalizeFormatKey, registryCapability } from "@tabee/formats";
 import { parseNewick } from "./newick.js";
 import { renderTree } from "./render.js";
 

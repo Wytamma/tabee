@@ -1,4 +1,4 @@
-import { createBridge } from "@cdep/browser";
+import { createBridge } from "@tabee/browser";
 
 /** Must match the sender byte for byte; this string is the entire contract. */
 const TEXT_V1 = "org.example.format.text.v1";

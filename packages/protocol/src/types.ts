@@ -1,14 +1,14 @@
 /**
- * CDEP v0.3 wire types.
+ * tabEE v0.3 wire types.
  *
- * This module is transport-agnostic: every shape here is what a CDEP
+ * This module is transport-agnostic: every shape here is what a tabEE
  * implementation sends over its channel. Penpal is an implementation detail;
  * the specification (specification/protocol.md) documents these shapes.
  */
-import type { CdepError, Result } from "./errors.js";
+import type { TabeeError, Result } from "./errors.js";
 import type { JsonValue } from "./json.js";
 
-export const PROTOCOL = "cdep" as const;
+export const PROTOCOL = "tabee" as const;
 export const PROTOCOL_VERSION = 3 as const;
 
 /** Hard protocol ceiling on files in one bundle; capabilities may be stricter. */
@@ -27,7 +27,7 @@ export interface SchemaRef {
 
 /** A single data representation an application can read or write. */
 export interface FormatCapability {
-  /** Namespaced, versioned identifier, e.g. `org.cdep.format.newick.v1`. */
+  /** Namespaced, versioned identifier, e.g. `org.tabee.format.newick.v1`. */
   id: string;
   /** Human-readable name for consent UI. Display only; never negotiated on. */
   label?: string;
@@ -138,7 +138,7 @@ export interface TransferStatus {
   transferId: string;
   state: TransferState;
   updatedAt: number;
-  error?: CdepError;
+  error?: TabeeError;
   receipt?: Receipt;
 }
 
@@ -177,7 +177,7 @@ export interface CancelAck {
 
 /**
  * Methods the receiving application exposes to the sender.
- * Implemented by `@cdep/browser`'s receiver; documented for alternate stacks.
+ * Implemented by `@tabee/browser`'s receiver; documented for alternate stacks.
  */
 export interface ReceiverService {
   getCapabilities(): Promise<Result<Capabilities>>;

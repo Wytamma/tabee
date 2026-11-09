@@ -95,7 +95,7 @@ function showConsentDialog(
   timeoutMs: number,
 ): Promise<boolean> {
   const host = doc.createElement("div");
-  host.setAttribute("data-cdep-consent", "");
+  host.setAttribute("data-tabee-consent", "");
   host.style.cssText =
     "position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;background:rgba(15,23,42,.55);";
 
@@ -105,13 +105,13 @@ function showConsentDialog(
 
   const dialog = doc.createElement("dialog");
   dialog.className = "dialog";
-  dialog.setAttribute("aria-labelledby", "cdep-consent-title");
+  dialog.setAttribute("aria-labelledby", "tabee-consent-title");
 
   const body = doc.createElement("div");
   body.className = "body";
 
   const title = doc.createElement("h2");
-  title.id = "cdep-consent-title";
+  title.id = "tabee-consent-title";
   title.textContent = "Incoming dataset";
 
   const subtitle = doc.createElement("p");

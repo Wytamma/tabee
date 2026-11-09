@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CdepException } from "@cdep/protocol";
+import { TabeeException } from "@tabee/protocol";
 import {
   assertPeerOrigin,
   assertTransferTarget,
@@ -12,7 +12,7 @@ function codeOf(action: () => unknown): string | undefined {
     action();
     return undefined;
   } catch (error) {
-    return error instanceof CdepException ? error.code : "not-a-cdep-error";
+    return error instanceof TabeeException ? error.code : "not-a-tabee-error";
   }
 }
 

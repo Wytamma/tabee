@@ -11,7 +11,7 @@ import {
   type Result,
   type TransferRequest,
   type TransferState,
-} from "@cdep/protocol";
+} from "@tabee/protocol";
 
 /**
  * Pure receiver-side policy. Kept out of the DOM code so every rejection path

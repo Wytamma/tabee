@@ -10,8 +10,8 @@ import {
 } from "../src/index.js";
 
 const now = Date.UTC(2026, 0, 1, 12, 0, 0);
-const NEWICK = "org.cdep.format.newick.v1";
-const CSV = "org.cdep.format.csv.v1";
+const NEWICK = "org.tabee.format.newick.v1";
+const CSV = "org.tabee.format.csv.v1";
 
 const offer: Offer = {
   offerId: "offer-0001",
@@ -218,7 +218,7 @@ describe("validateTransferRequest", () => {
       files: [
         {
           name: "tree.json",
-          formatId: "org.cdep.format.auspice.v2",
+          formatId: "org.tabee.format.auspice.v2",
           sizeBytes: 4,
           data: new ArrayBuffer(4),
         },

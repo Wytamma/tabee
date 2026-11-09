@@ -1,5 +1,5 @@
-import { createBridge } from "@cdep/browser";
-import { CdepException } from "@cdep/protocol";
+import { createBridge } from "@tabee/browser";
+import { TabeeException } from "@tabee/protocol";
 
 /**
  * Any valid format identifier works; the proposed registry is not a
@@ -52,7 +52,7 @@ elements.form.addEventListener("submit", (event) => {
     })
     .catch((error: unknown) => {
       const message =
-        error instanceof CdepException
+        error instanceof TabeeException
           ? `${error.code}: ${error.message}`
           : error instanceof Error
             ? error.message

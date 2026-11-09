@@ -1,5 +1,5 @@
 import { connect, WindowMessenger, type Methods, type RemoteProxy } from "penpal";
-import { CdepException } from "@cdep/protocol";
+import { TabeeException } from "@tabee/protocol";
 import { toTransportError } from "./result.js";
 
 export interface Transport<TMethods extends Methods> {
@@ -9,7 +9,7 @@ export interface Transport<TMethods extends Methods> {
 
 /**
  * Exact-origin Penpal connection. `allowedOrigins` is always the origin that
- * CDEP verified from the raw handshake; a wildcard is never permitted here.
+ * tabEE verified from the raw handshake; a wildcard is never permitted here.
  */
 export async function openTransport<TMethods extends Methods>(options: {
   remoteWindow: Window;
@@ -35,6 +35,6 @@ export async function openTransport<TMethods extends Methods>(options: {
     return { remote, destroy: () => connection.destroy() };
   } catch (error) {
     connection.destroy();
-    throw new CdepException(toTransportError(error, "Could not establish the CDEP session"));
+    throw new TabeeException(toTransportError(error, "Could not establish the tabEE session"));
   }
 }

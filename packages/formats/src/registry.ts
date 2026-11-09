@@ -1,4 +1,4 @@
-import type { FormatCapability } from "@cdep/protocol";
+import type { FormatCapability } from "@tabee/protocol";
 import {
   AUSPICE_V2,
   CSV_V1,
@@ -64,7 +64,7 @@ export const REGISTRY_BY_ID: ReadonlyMap<string, FormatDefinition> = new Map(
   FORMAT_REGISTRY.map((definition) => [definition.id, definition]),
 );
 
-/** Short alias used in developer-facing code, e.g. `newick` for `org.cdep.format.newick.v1`. */
+/** Short alias used in developer-facing code, e.g. `newick` for `org.tabee.format.newick.v1`. */
 export const REGISTRY_BY_ALIAS: ReadonlyMap<string, FormatDefinition> = new Map(
   FORMAT_REGISTRY.map((definition) => {
     const segments = definition.id.split(".");

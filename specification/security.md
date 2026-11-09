@@ -1,19 +1,19 @@
 # Security model
 
-CDEP moves user data between two independently operated web applications. The
+tabEE moves user data between two independently operated web applications. The
 receiver is the party at risk: it is asked to interpret bytes produced by a
 stranger. v0.3 therefore assumes:
 
 - the **sender is untrusted**;
 - the **receiver's origin and code are trusted by the receiver's own user**;
-- the browser authenticates origins; CDEP never invents identity;
-- TLS protects the channel; CDEP adds no confidentiality of its own.
+- the browser authenticates origins; tabEE never invents identity;
+- TLS protects the channel; tabEE adds no confidentiality of its own.
 
 ## 1. Threat table
 
 | Threat | Control | Residual risk |
 | --- | --- | --- |
-| A page opens a CDEP receiver and silently extracts its data | Receiver requires explicit user approval with bundle name, total size, every file name/format/size, and verified origin; `accept` is only called after that decision. | A user can approve a malicious transfer. |
+| A page opens a tabEE receiver and silently extracts its data | Receiver requires explicit user approval with bundle name, total size, every file name/format/size, and verified origin; `accept` is only called after that decision. | A user can approve a malicious transfer. |
 | A hostile receiver phishes the sender | Sender shows the destination origin before/while opening; no credentials, cookies, or local data are sent during discovery; nothing is released until the receiver approves. | The receiving tab is still a separate window; users must read the origin. |
 | A third window injects messages into an active session | The bootstrap accepts only `event.source === window.opener` with a matching 128-bit nonce; the transport pins the verified origin and the nonce-derived channel. | Compromise of either origin's code, or a browser extension, defeats this. |
 | Origin spoofing in metadata | The receiver compares `offer.sender.origin` with the origin observed on the transport; disagreement is `ORIGIN_MISMATCH`. The consent dialog displays only the verified origin. | Claimed `application.name` remains unverified text. |
@@ -33,7 +33,7 @@ Three checks must all hold for a session:
 
 1. **Bootstrap source**: `event.source === window.opener` on the receiver, and
    `event.source` equal to the window the sender opened, on the sender side.
-2. **Nonce**: `cdep-sid` in the receiver's fragment equals the nonce in the
+2. **Nonce**: `tabee-sid` in the receiver's fragment equals the nonce in the
    hello; the nonce selects the transport channel.
 3. **Origin**: taken from `MessageEvent.origin`, then pinned as the only allowed
    origin for the connection. In the reference implementation this is Penpal's

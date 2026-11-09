@@ -1,4 +1,4 @@
-import { CdepException, cdepError, type CdepError } from "@cdep/protocol";
+import { TabeeException, tabeeError, type TabeeError } from "@tabee/protocol";
 
 const LOOPBACK_HOSTS: Record<string, true> = {
   localhost: true,
@@ -20,8 +20,8 @@ export function isTransportAllowedByPolicy(url: URL): boolean {
   return url.protocol === "http:" && isLoopbackHost(url.hostname);
 }
 
-function policyError(code: CdepError["code"], message: string, details?: Record<string, unknown>): CdepException {
-  return new CdepException(cdepError(code, message, details));
+function policyError(code: TabeeError["code"], message: string, details?: Record<string, unknown>): TabeeException {
+  return new TabeeException(tabeeError(code, message, details));
 }
 
 /**
@@ -43,7 +43,7 @@ export function assertTransferTarget(rawUrl: string): URL {
   if (!isTransportAllowedByPolicy(url)) {
     throw policyError(
       "HTTPS_REQUIRED",
-      "CDEP requires HTTPS; plain HTTP is accepted only on localhost and 127.0.0.1",
+      "tabEE requires HTTPS; plain HTTP is accepted only on localhost and 127.0.0.1",
       { origin: url.origin, protocol: url.protocol },
     );
   }
@@ -55,7 +55,7 @@ export function assertTransferTarget(rawUrl: string): URL {
 
 /**
  * A peer origin verified from a message event still has to satisfy transport
- * policy: a plain-HTTP page on the public internet must not be a CDEP peer.
+ * policy: a plain-HTTP page on the public internet must not be a tabEE peer.
  */
 export function assertPeerOrigin(origin: string): string {
   let url: URL;
@@ -68,7 +68,7 @@ export function assertPeerOrigin(origin: string): string {
     throw policyError("ORIGIN_MISMATCH", "Peer origin is opaque or not normalized", { origin });
   }
   if (!isTransportAllowedByPolicy(url)) {
-    throw policyError("HTTPS_REQUIRED", "Peer origin does not satisfy CDEP transport policy", {
+    throw policyError("HTTPS_REQUIRED", "Peer origin does not satisfy tabEE transport policy", {
       origin,
     });
   }
