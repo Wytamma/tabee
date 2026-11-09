@@ -1,12 +1,27 @@
 # tabEE — the tab exchange engine
 
-Capability discovery, user-approved dataset transfer, and receipts between two
-browser applications. No backend, no shared code, no prior knowledge of each
-other.
+tabEE moves datasets between two browser applications: one opens the other,
+they discover matching formats, the user approves what arrives, and the
+receiver imports the bytes. No backend, no shared code, and no prior knowledge
+of the other side.
 
-Status: v0.3 draft. Browser-only. Ships a TypeScript SDK, a wire specification,
-and two independently hosted reference applications. Wire version 3 adds
-per-file formats and mixed-format bundles; wire version 3 peers only.
+Browser-only. Ships a TypeScript SDK, a wire specification, and reference
+sender and receiver applications.
+
+## Features
+
+- **No server.** Discovery runs over `postMessage`; the receiving page is the
+  application itself, not a separate endpoint.
+- **Exact matching.** Formats and schemas match by identifier, never by file
+  extension, media type, or content sniffing.
+- **Explicit consent.** The receiver shows the dataset name, total size, every
+  file with its format and size, and the sender's verified origin before any
+  adapter runs.
+- **Bounded transfers.** Per-file, per-format, and per-bridge limits; expiring
+  offers; single-use invitation nonces.
+- **Receipts.** `sendTo` resolves only after the receiver imported the dataset.
+- **Bundles.** One transfer can carry up to 16 files of different formats, each
+  with optional JSON metadata.
 
 ## How it works
 
@@ -27,27 +42,13 @@ sendTo("http://localhost:5182/", { format: "newick" })
   └─ Receipt {formats, fileCount, bytes}  ←
 ```
 
-Penpal carries the calls; tabEE owns discovery, negotiation, consent, validation,
-lifecycle, and error codes. Another stack can implement the same protocol over
-raw `postMessage`.
+Penpal carries the calls; tabEE owns discovery, negotiation, consent,
+validation, lifecycle, and error codes. Another stack can implement the same
+protocol over raw `postMessage`.
 
-The receiving page opens as a normal tab (`window.open` with no window
-features) and stays open as the working application after the import; the
-sender must not close it on success.
-
-## Repository layout
-
-```
-packages/protocol   wire types, validators, negotiation, state machine (no DOM)
-packages/browser    handshake, Penpal transport, sender, receiver, consent, bridge
-packages/formats    proposed format identifiers and registry
-examples/newick-sender  sender only: editable Newick draft, one Send button
-examples/tree-viewer    receiver only: imports Newick, renders SVG
-examples/hello-sender   smallest sender: one custom format, textarea, Send button
-examples/hello-receiver smallest receiver: one custom format, prints the text
-specification/      protocol, discovery, security, format registry
-tests/e2e           Playwright, two loopback origins, three engines
-```
+The receiving page opens as a normal tab (`window.open` with no window features)
+and stays open as the working application after the import; the sender must not
+close it on success.
 
 ## Quick start
 
@@ -156,7 +157,19 @@ importBundle: (bundle, context) => {
 `bundles` is not negotiated by name: the receiver sees formats, not bundle
 identifiers, so a bundle id is purely a sender-side label.
 
-## Run the demos
+## Examples
+
+The repository ships two pairs of standalone apps:
+
+- **Newick Sender** — a textarea is the exported payload. Its check is
+  structural only; the receiver performs the real parse. An obviously malformed
+  draft is refused before a window opens.
+- **Tree Viewer** — receiver only: imports Newick, renders the cladogram, and
+  shows the sender origin, file count, and leaf count. It has no export,
+  bundle, or file-upload path.
+- **Hello Sender / Hello Receiver** — the smallest complete exchange: a private
+  format identifier (`org.example.format.text.v1`), one export adapter, one
+  import adapter, and no registry package or `normalizeFormatKey`.
 
 ```sh
 npm install
@@ -167,60 +180,37 @@ npm run dev -w @tabee/example-hello-sender     # http://localhost:5185
 npm run dev -w @tabee/example-hello-receiver   # http://localhost:5186
 ```
 
-Different hostnames and ports, so every demo transfer is cross-origin. Static
-hosting is enough; nothing talks to a server.
+Each app runs on a different loopback hostname or port, so every demo transfer
+is cross-origin. Static hosting is enough; nothing talks to a server.
 
-Newick Sender's textarea is what gets exported. Its check is structural only —
-Tree Viewer performs the real parse — which is exactly the division of
-responsibility tabEE assumes. An obviously malformed draft is refused before a
-window opens.
-
-Tree Viewer is a pure receiver: it imports Newick, renders the cladogram, and
-shows the sender origin, file count, and leaf count. It has no export, bundle,
-or file-upload path; every tree it displays arrived through tabEE.
-
-The hello pair is the smallest complete exchange: a private identifier
-(`org.example.format.text.v1`), one export adapter, one import adapter, and no
-registry package or `normalizeFormatKey`. Both apps spell the identifier
-literally; matching is exact string equality. Sender defaults to the receiver's
-URL, so two dev servers are enough for a working cross-origin transfer.
-
-## Verify
+## Development
 
 ```sh
-npm run typecheck     # packages + demo apps, no emit
-npm test              # 225 Vitest tests, no DOM required
-npm run e2e           # Chromium, Firefox, WebKit on two loopback origins
+npm run typecheck              # packages + examples, no emit
+npm test                       # Vitest unit tests, no DOM required
+npx playwright install         # once, for browser tests
+npm run e2e                    # Chromium, Firefox, WebKit
 ```
 
-The e2e suite covers: approved cross-origin transfer (asserts the imported tree,
-the receipt, the consent facts, and that the nonce is stripped), a declined
-offer, an edited draft reaching the receiver, and a malformed draft refused
-before a window opens.
+Repository layout:
 
-## Acceptance status (v0.3)
+```
+packages/protocol   wire types, validators, negotiation, state machine (no DOM)
+packages/browser    handshake, Penpal transport, sender, receiver, consent, bridge
+packages/formats    format identifiers and registry
+examples/newick-sender   sender only: editable Newick draft, one Send button
+examples/tree-viewer     receiver only: imports Newick, renders SVG
+examples/hello-sender    smallest sender: one custom format, textarea, Send
+examples/hello-receiver  smallest receiver: one custom format, prints the text
+specification/       protocol, discovery, security, format registry
+tests/e2e            Playwright, two loopback origins, three engines
+```
 
-| Criterion | Status |
-| --- | --- |
-| Two apps on different origins connect | ✅ e2e (loopback HTTP; see policy below) |
-| A discovers B's capabilities without a server | ✅ e2e |
-| Exact matching format identified automatically | ✅ e2e + unit |
-| Incompatible format rejected before transfer | ✅ unit |
-| User can approve or reject | ✅ e2e |
-| Valid Newick imports correctly | ✅ e2e (single file), unit (multi-file) |
-| Multi-file bundle with per-file and per-format limits | ✅ unit |
-| Mixed Newick + CSV bundle in one transfer | ✅ unit |
-| Per-file JSON metadata survives the transfer | ✅ unit |
-| Unexpected origins rejected | ✅ unit (source check, exact `allowedOrigins`, origin cross-check) |
-| Invalid schemas, excess sizes, expired sessions fail safely | ✅ unit |
-| Blocked windows / incompatible opener policies produce clear errors | ✅ codes implemented; not e2e (Playwright cannot block `window.open`, and COOP needs a separate deployment) |
-| Chrome, Firefox, Safari | ✅ Chromium, Firefox, WebKit e2e |
+HTTPS is mandatory except on `localhost`, `127.0.0.1`, and `[::1]`, where
+browsers already treat the origin as secure; development and tests need no
+certificates.
 
-Transport policy: HTTPS everywhere except `localhost`, `127.0.0.1`, and `[::1]`,
-so development and tests need no certificates. This is a deliberate, documented
-exception to "HTTPS only".
-
-## Security in one paragraph
+## Security
 
 The receiver never releases data on discovery alone. Before approval it sees the
 bundle name, total size, every file with its format and size, and the sender's
@@ -229,9 +219,10 @@ bundle name, total size, every file with its format and size, and the sender's
 origin; the invitation nonce is single-use and stripped from the URL. Every
 inbound structure is validated, every file's format and schema is matched, and
 file sets, sizes, and per-file JSON metadata are checked twice. Binary exports
-are copied so the sender's memory is never detached. There is no sender identity, no payload signature, and
-no confidentiality from the receiver's own origin. Read
-[specification/security.md](./specification/security.md) before deploying.
+are copied so the sender's memory is never detached. There is no sender identity,
+no payload signature, and no confidentiality from the receiver's own origin.
+
+Read [specification/security.md](./specification/security.md) before deploying.
 
 ## Documentation
 
@@ -243,12 +234,6 @@ no confidentiality from the receiver's own origin. Read
   controls, residual risks.
 - [specification/format-registry.md](./specification/format-registry.md) —
   identifiers, matching, schemas.
-
-## Out of scope for v0.3
-
-WebRTC, format conversion, per-file approval within one bundle, unattended
-transfers, chunking/streaming, persistent sessions, SDKs for other languages,
-cloud storage, a global application directory, and sender authenticity.
 
 ## License
 

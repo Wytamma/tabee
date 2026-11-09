@@ -6,7 +6,7 @@ import {
 
 const valid: Capabilities = {
   protocol: "tabee",
-  version: 3,
+  version: 1,
   application: { name: "Tree Viewer", url: "https://treeviewer.example" },
   imports: [
     {
@@ -43,7 +43,7 @@ describe("validateCapabilities", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error.code).toBe("VERSION_UNSUPPORTED");
-      expect(result.error.details).toMatchObject({ received: 4, supported: 3 });
+      expect(result.error.details).toMatchObject({ received: 4, supported: 1 });
     }
   });
 

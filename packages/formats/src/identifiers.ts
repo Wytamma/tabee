@@ -1,5 +1,5 @@
 /**
- * tabEE-proposed format identifiers.
+ * tabEE format identifiers.
  *
  * These are namespaced identifiers, not the official identifiers of the
  * underlying formats, and not file extensions. Version suffixes are part of

@@ -1,7 +1,7 @@
 {
   "name": "@tabee/formats",
   "version": "0.1.0",
-  "description": "tabEE-proposed scientific data format identifiers and registry.",
+  "description": "tabEE scientific data format identifiers and registry.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,

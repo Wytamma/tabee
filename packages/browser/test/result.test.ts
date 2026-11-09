@@ -4,7 +4,7 @@ import { readRemoteResult, toTransportError } from "../src/result.js";
 
 const capabilities = {
   protocol: "tabee" as const,
-  version: 3 as const,
+  version: 1 as const,
   application: { name: "Tree Viewer" },
   imports: [{ id: "org.tabee.format.newick.v1" }],
   exports: [],

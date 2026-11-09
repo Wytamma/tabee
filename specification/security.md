@@ -2,7 +2,7 @@
 
 tabEE moves user data between two independently operated web applications. The
 receiver is the party at risk: it is asked to interpret bytes produced by a
-stranger. v0.3 therefore assumes:
+stranger. v0.1 therefore assumes:
 
 - the **sender is untrusted**;
 - the **receiver's origin and code are trusted by the receiver's own user**;
@@ -18,10 +18,10 @@ stranger. v0.3 therefore assumes:
 | A third window injects messages into an active session | The bootstrap accepts only `event.source === window.opener` with a matching 128-bit nonce; the transport pins the verified origin and the nonce-derived channel. | Compromise of either origin's code, or a browser extension, defeats this. |
 | Origin spoofing in metadata | The receiver compares `offer.sender.origin` with the origin observed on the transport; disagreement is `ORIGIN_MISMATCH`. The consent dialog displays only the verified origin. | Claimed `application.name` remains unverified text. |
 | Replaying an invitation | Nonce is single-use, bound to one channel, stripped from the URL after the handshake; offers expire; a transfer id cannot be reused. | A captured nonce is useless without the opener window; no replay window is open in the reference implementation. |
-| Oversized payloads or memory exhaustion | Sender advertises and enforces limits; receiver checks the declared total, per-file sizes, per-format sums, and file counts **before** consent, then re-measures every file and the total; absolute caps on capability lists, file count (16), and metadata lengths. | No streaming, no rate limiting: many small offers are not throttled in v0.3. |
+| Oversized payloads or memory exhaustion | Sender advertises and enforces limits; receiver checks the declared total, per-file sizes, per-format sums, and file counts **before** consent, then re-measures every file and the total; absolute caps on capability lists, file count (16), and metadata lengths. | No streaming, no rate limiting: many small offers are not throttled in v0.1. |
 | Detaching the sender's own buffer | The SDK copies binary exports into a fresh `ArrayBuffer` before transferring; the application's memory is never detached. | Extra copy up to the size limit. |
 | Markup injection through metadata | Bundle names, file names, application names, origins, and error messages are inserted with `textContent`; the dialog lives in a shadow root so host CSS cannot spoof its controls. | Applications must not render payload content as HTML. |
-| COOP severs the opener | Detected: the receiver reports `OPENER_UNAVAILABLE`; the sender times out. The SDK never relaxes site isolation. | Sites with strict COOP simply cannot use new-window transport in v0.3. |
+| COOP severs the opener | Detected: the receiver reports `OPENER_UNAVAILABLE`; the sender times out. The SDK never relaxes site isolation. | Sites with strict COOP simply cannot use new-window transport in v0.1. |
 | Window blockers | Explicit `POPUP_BLOCKED` before any network or message activity. | Users may not understand why nothing opened. |
 | Metadata abuse | File metadata is JSON-only, normalized into plain objects, capped per file (16 KiB, depth 8, 64 keys, 256 array entries), and compared between offer and payload. | Semantic meaning is application-specific; a receiver must not trust metadata fields. |
 | Malformed or hostile protocol data | Every inbound structure is validated (`validateCapabilities`, `validateOffer`, `validateTransferRequest`, `validateCancelRequest`) and unknown fields are dropped, not forwarded. | Validation is structural, not semantic. |
@@ -85,7 +85,7 @@ rejects every other transition.
 - The SDK keeps at most 16 transfer records per receiving window and one
   connection per invitation.
 
-## 5. Known gaps (v0.3)
+## 5. Known gaps (v0.1)
 
 - **No sender identity.** Any page can claim any `application.name`. Only the
   origin is authenticated, and only by the browser.

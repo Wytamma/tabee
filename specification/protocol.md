@@ -1,6 +1,6 @@
-# tabEE protocol v0.3 (draft)
+# tabEE protocol v0.1
 
-Status: draft, implemented by `@tabee/protocol` and `@tabee/browser`.
+Status: v0.1, implemented by `@tabee/protocol` and `@tabee/browser`.
 Scope: browser-to-browser dataset transfer between two web applications with no
 backend, no shared code, and no prior knowledge of each other.
 
@@ -21,10 +21,10 @@ the direction of the receiving window, not in capabilities.
 
 ## 2. Versioning
 
-A capabilities payload carries `protocol: "tabee"` and `version: 3`. A peer MUST
+A capabilities payload carries `protocol: "tabee"` and `version: 1`. A peer MUST
 reject any other protocol name (`PROTOCOL_MISMATCH`) or version
 (`VERSION_UNSUPPORTED`) before exchanging offers. Versions are not negotiated:
-an implementation either supports version 3 or refuses the session.
+an implementation either supports version 1 or refuses the session.
 
 ## 3. Envelope
 
@@ -46,7 +46,7 @@ unescaped. `details` is free-form and MAY be logged.
 ```ts
 interface Capabilities {
   protocol: "tabee";
-  version: 3;
+  version: 1;
   application: { name: string; url?: string };
   imports: FormatCapability[];
   exports: FormatCapability[];
@@ -244,7 +244,7 @@ MUST reject illegal transitions with `TRANSFER_STATE_INVALID`.
 Transport-specific codes are still part of the protocol: a caller should not
 have to parse messages to distinguish a blocked window from a broken dataset.
 
-## 9. Non-goals for v0.3
+## 9. Non-goals for v0.1
 
 - WebRTC or any peer-to-peer transport.
 - Automatic format conversion or semantic inference.
@@ -252,7 +252,7 @@ have to parse messages to distinguish a blocked window from a broken dataset.
 - Background transfers without a human gesture and approval.
 - Streaming, chunking, or multi-gigabyte payloads.
 - Persistent sessions or resumption after navigation.
-- Establishing the sender's identity: authenticity is not part of v0.3.
+- Establishing the sender's identity: authenticity is not part of v0.1.
 
 ## 10. Conformance checklist
 

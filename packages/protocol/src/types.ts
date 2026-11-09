@@ -1,5 +1,5 @@
 /**
- * tabEE v0.3 wire types.
+ * tabEE v0.1 wire types.
  *
  * This module is transport-agnostic: every shape here is what a tabEE
  * implementation sends over its channel. Penpal is an implementation detail;
@@ -9,7 +9,7 @@ import type { TabeeError, Result } from "./errors.js";
 import type { JsonValue } from "./json.js";
 
 export const PROTOCOL = "tabee" as const;
-export const PROTOCOL_VERSION = 3 as const;
+export const PROTOCOL_VERSION = 1 as const;
 
 /** Hard protocol ceiling on files in one bundle; capabilities may be stricter. */
 export const MAX_BUNDLE_FILES = 16;

@@ -2,9 +2,9 @@ import { createBridge } from "@tabee/browser";
 import { TabeeException } from "@tabee/protocol";
 
 /**
- * Any valid format identifier works; the proposed registry is not a
- * requirement. Both apps declare this exact string, and that is the whole
- * agreement. Compatibility is exact-string equality, never content sniffing.
+ * Any valid format identifier works; the format registry is not a requirement.
+ * Both apps declare this exact string, and that is the whole agreement.
+ * Compatibility is exact-string equality, never content sniffing.
  */
 const TEXT_V1 = "org.example.format.text.v1";
 

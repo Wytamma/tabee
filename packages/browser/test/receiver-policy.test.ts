@@ -16,7 +16,7 @@ const CSV_TEXT = "name,length";
 
 const capabilities: Capabilities = {
   protocol: "tabee",
-  version: 3,
+  version: 1,
   application: { name: "Tree Viewer" },
   imports: [
     { id: NEWICK, label: "Newick", maxBytes: 512, maxFiles: 2, maxFileBytes: 300 },
