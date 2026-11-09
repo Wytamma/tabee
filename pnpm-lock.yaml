@@ -24,6 +24,32 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.5)
 
+  examples/hello-receiver:
+    dependencies:
+      '@cdep/browser':
+        specifier: workspace:*
+        version: link:../../packages/browser
+      '@cdep/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+    devDependencies:
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.5(@types/node@22.20.5)
+
+  examples/hello-sender:
+    dependencies:
+      '@cdep/browser':
+        specifier: workspace:*
+        version: link:../../packages/browser
+      '@cdep/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+    devDependencies:
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.5(@types/node@22.20.5)
+
   examples/sequence-app:
     dependencies:
       '@cdep/browser':

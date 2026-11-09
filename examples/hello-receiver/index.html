@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hello Receiver · CDEP demo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #0f172a;
+        --muted: #64748b;
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --border: #e2e8f0;
+        --error: #b91c1c;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e2e8f0;
+          --muted: #94a3b8;
+          --bg: #0b1120;
+          --panel: #111827;
+          --border: #1f2937;
+          --error: #f87171;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 48px 20px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main {
+        max-width: 560px;
+        margin: 0 auto;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+      }
+      h1 { margin: 0 0 4px; font-size: 22px; }
+      .sub { margin: 0 0 20px; color: var(--muted); }
+      #session { min-height: 1.5em; margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+      #session[data-state="FAILED"] { color: var(--error); }
+      pre {
+        margin: 0;
+        min-height: 96px;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg);
+        font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      pre:empty::after { content: "(nothing received yet)"; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Hello Receiver</h1>
+      <p class="sub">The smallest receiver: one format, one import adapter.</p>
+      <p id="session" role="status">No CDEP session in this window.</p>
+      <pre id="message"></pre>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

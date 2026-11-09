@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "pnpm -r --filter './packages/**' run build",
-    "typecheck": "pnpm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/sequence-app/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit",
+    "typecheck": "pnpm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/sequence-app/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit && tsc -p examples/hello-sender/tsconfig.json --noEmit && tsc -p examples/hello-receiver/tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",

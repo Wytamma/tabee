@@ -43,6 +43,8 @@ packages/browser    handshake, Penpal transport, sender, receiver, consent, brid
 packages/formats    proposed format identifiers and registry
 examples/sequence-app   exports Newick + FASTA, imports FASTA (tree draft is editable)
 examples/tree-viewer    starts empty; loads Newick files or receives a bundle, renders SVG
+examples/hello-sender   smallest sender: one custom format, textarea, Send button
+examples/hello-receiver smallest receiver: one custom format, prints the text
 specification/      protocol, discovery, security, format registry
 tests/e2e           Playwright, two loopback origins, three engines
 ```
@@ -161,6 +163,8 @@ pnpm install
 pnpm build            # packages emit dist/; the demos import it
 pnpm --filter @cdep/example-sequence-app dev     # http://127.0.0.1:5181
 pnpm --filter @cdep/example-tree-viewer dev      # http://localhost:5182
+pnpm --filter @cdep/example-hello-sender dev     # http://localhost:5185
+pnpm --filter @cdep/example-hello-receiver dev   # http://localhost:5186
 ```
 
 Different hostnames and ports, so every demo transfer is cross-origin. Static
@@ -182,6 +186,12 @@ records, each carrying its own JSON metadata. Tree Viewer can forward that same
 bundle onward once it has received both parts; it shows each file's metadata in
 the bundle list and preserves it on re-export. Sending is disabled in Tree
 Viewer while nothing is loaded.
+
+The hello pair is the smallest complete exchange: a private identifier
+(`org.example.format.text.v1`), one export adapter, one import adapter, and no
+registry package or `normalizeFormatKey`. Both apps spell the identifier
+literally; matching is exact string equality. Sender defaults to the receiver's
+URL, so two dev servers are enough for a working cross-origin transfer.
 
 Fixtures for the failure paths:
 
