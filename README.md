@@ -1,3 +1,5 @@
+![tabEE logo](./logo.png)
+
 # tabEE — the tab exchange engine
 
 tabEE moves datasets between two browser applications: one opens the other,
