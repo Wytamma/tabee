@@ -1,5 +1,5 @@
 {
-  "name": "@cdep/example-sequence-app",
+  "name": "@cdep/example-newick-sender",
   "version": "0.0.0",
   "private": true,
   "type": "module",

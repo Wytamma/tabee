@@ -11,16 +11,16 @@ per-file formats and mixed-format bundles; wire version 3 peers only.
 ## How it works
 
 ```
-Sequence App (origin A)                         Tree Viewer (origin B)
+Newick Sender (origin A)                       Tree Viewer (origin B)
 ──────────────────────                         ──────────────────────
-sendTo("http://localhost:5182/", { bundle })
+sendTo("http://localhost:5182/", { format: "newick" })
   ├─ open B with #cdep=1&cdep-sid=<nonce>
   ├─ raw postMessage hello/hello-ack      →    verify source === opener
   │                                            take origin from event.origin
   │                                            strip nonce, connect
-  ├─ getCapabilities()                    →    {newick, csv imports, …}
-  ├─ match every file's format + schema
-  ├─ offer(bundle: files, formats, sizes) →    validate, then ask the human
+  ├─ getCapabilities()                    →    {newick imports}
+  ├─ match the format
+  ├─ offer(dataset: files, formats, sizes) →   validate, then ask the human
   │                                            shows every file, format, origin
   ├─ accept({offerId})                    ←    only after approval
   ├─ transfer(files[])                    →    re-validate sets and sizes
@@ -41,8 +41,8 @@ sender must not close it on success.
 packages/protocol   wire types, validators, negotiation, state machine (no DOM)
 packages/browser    handshake, Penpal transport, sender, receiver, consent, bridge
 packages/formats    proposed format identifiers and registry
-examples/sequence-app   exports Newick + FASTA, imports FASTA (tree draft is editable)
-examples/tree-viewer    starts empty; loads Newick files or receives a bundle, renders SVG
+examples/newick-sender  sender only: editable Newick draft, one Send button
+examples/tree-viewer    receiver only: imports Newick, renders SVG
 examples/hello-sender   smallest sender: one custom format, textarea, Send button
 examples/hello-receiver smallest receiver: one custom format, prints the text
 specification/      protocol, discovery, security, format registry
@@ -118,7 +118,7 @@ bundles: {
         name: "tree.nwk",
         formatId: NEWICK_V1,
         data: serializeTree(),
-        metadata: { source: "sequence-app", tips: 4 },
+        metadata: { source: "newick-sender", tips: 4 },
       },
       {
         name: "metadata.csv",
@@ -161,7 +161,7 @@ identifiers, so a bundle id is purely a sender-side label.
 ```sh
 npm install
 npm run build            # packages emit dist/; the demos import it
-npm run dev -w @cdep/example-sequence-app     # http://127.0.0.1:5181
+npm run dev -w @cdep/example-newick-sender    # http://127.0.0.1:5181
 npm run dev -w @cdep/example-tree-viewer      # http://localhost:5182
 npm run dev -w @cdep/example-hello-sender     # http://localhost:5185
 npm run dev -w @cdep/example-hello-receiver   # http://localhost:5186
@@ -170,35 +170,20 @@ npm run dev -w @cdep/example-hello-receiver   # http://localhost:5186
 Different hostnames and ports, so every demo transfer is cross-origin. Static
 hosting is enough; nothing talks to a server.
 
-Sequence App's Newick draft is editable: the textarea is what gets exported, and
-the sender refuses an obviously malformed draft before opening a window. That
-check is structural only — Tree Viewer performs the real parse — which is
-exactly the division of responsibility CDEP assumes.
+Newick Sender's textarea is what gets exported. Its check is structural only —
+Tree Viewer performs the real parse — which is exactly the division of
+responsibility CDEP assumes. An obviously malformed draft is refused before a
+window opens.
 
-Tree Viewer starts with no tree. Load one or more `.nwk`/`.newick`/`.tree` files
-with its file input, or receive a bundle; the active tree is rendered, every
-file is listed, and the send action transfers the whole Newick bundle. It
-imports CSV metadata too and renders it as a table.
-
-Sequence App offers three sends: Newick, FASTA, and **Tree + metadata** — a
-mixed bundle of `tree.nwk` plus `metadata.csv` generated from the current FASTA
-records, each carrying its own JSON metadata. Tree Viewer can forward that same
-bundle onward once it has received both parts; it shows each file's metadata in
-the bundle list and preserves it on re-export. Sending is disabled in Tree
-Viewer while nothing is loaded.
+Tree Viewer is a pure receiver: it imports Newick, renders the cladogram, and
+shows the sender origin, file count, and leaf count. It has no export, bundle,
+or file-upload path; every tree it displays arrived through CDEP.
 
 The hello pair is the smallest complete exchange: a private identifier
 (`org.example.format.text.v1`), one export adapter, one import adapter, and no
 registry package or `normalizeFormatKey`. Both apps spell the identifier
 literally; matching is exact string equality. Sender defaults to the receiver's
 URL, so two dev servers are enough for a working cross-origin transfer.
-
-Fixtures for the failure paths:
-
-- choose **FASTA** in Sequence App → Tree Viewer has no FASTA import →
-  `NO_COMMON_FORMAT`;
-- open `http://127.0.0.1:5181/?fixture=oversize` → the Newick export exceeds the
-  10 MB ceiling → `SIZE_EXCEEDED`.
 
 ## Verify
 
@@ -209,10 +194,9 @@ npm run e2e           # Chromium, Firefox, WebKit on two loopback origins
 ```
 
 The e2e suite covers: approved cross-origin transfer (asserts the imported tree,
-the receipt, the consent facts, and that the nonce is stripped), declined
-transfer, incompatible format, oversize payload, a receiver page used normally
-without an invitation, a multi-file same-format bundle between two instances,
-and a mixed Newick + CSV bundle that renders both a tree and a metadata table.
+the receipt, the consent facts, and that the nonce is stripped), a declined
+offer, an edited draft reaching the receiver, and a malformed draft refused
+before a window opens.
 
 ## Acceptance status (v0.3)
 
@@ -221,14 +205,14 @@ and a mixed Newick + CSV bundle that renders both a tree and a metadata table.
 | Two apps on different origins connect | ✅ e2e (loopback HTTP; see policy below) |
 | A discovers B's capabilities without a server | ✅ e2e |
 | Exact matching format identified automatically | ✅ e2e + unit |
-| Incompatible format rejected before transfer | ✅ e2e |
+| Incompatible format rejected before transfer | ✅ unit |
 | User can approve or reject | ✅ e2e |
-| Valid Newick imports correctly | ✅ e2e (single and multi-file) |
-| Multi-file bundle with per-file and per-format limits | ✅ e2e + unit |
-| Mixed Newick + CSV bundle in one transfer | ✅ e2e + unit |
-| Per-file JSON metadata survives the transfer and re-export | ✅ unit + e2e |
+| Valid Newick imports correctly | ✅ e2e (single file), unit (multi-file) |
+| Multi-file bundle with per-file and per-format limits | ✅ unit |
+| Mixed Newick + CSV bundle in one transfer | ✅ unit |
+| Per-file JSON metadata survives the transfer | ✅ unit |
 | Unexpected origins rejected | ✅ unit (source check, exact `allowedOrigins`, origin cross-check) |
-| Invalid schemas, excess sizes, expired sessions fail safely | ✅ unit + e2e (size) |
+| Invalid schemas, excess sizes, expired sessions fail safely | ✅ unit |
 | Blocked windows / incompatible opener policies produce clear errors | ✅ codes implemented; not e2e (Playwright cannot block `window.open`, and COOP needs a separate deployment) |
 | Chrome, Firefox, Safari | ✅ Chromium, Firefox, WebKit e2e |
 

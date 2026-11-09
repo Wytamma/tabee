@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Newick Sender · CDEP demo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #0f172a;
+        --muted: #64748b;
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --border: #e2e8f0;
+        --accent: #0f172a;
+        --error: #b91c1c;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e2e8f0;
+          --muted: #94a3b8;
+          --bg: #0b1120;
+          --panel: #111827;
+          --border: #1f2937;
+          --accent: #e2e8f0;
+          --error: #f87171;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 32px 20px 64px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main { max-width: 680px; margin: 0 auto; }
+      h1 { margin: 0 0 4px; font-size: 24px; }
+      .sub { margin: 0 0 24px; color: var(--muted); }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+      textarea, input, button {
+        font: inherit;
+        color: var(--fg);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 10px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 84px;
+        font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+        resize: vertical;
+      }
+      textarea[aria-invalid="true"] { border-color: var(--error); }
+      button {
+        cursor: pointer;
+        background: var(--accent);
+        color: var(--bg);
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+      .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+      .toolbar input { min-width: 260px; }
+      #tree-status { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+      #tree-status[data-valid="false"] { color: var(--error); }
+      #status { min-height: 1.5em; margin: 12px 0 0; font-size: 14px; }
+      #status[data-kind="error"] { color: var(--error); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Newick Sender</h1>
+      <p class="sub">Edit a tree and send it to a receiver that imports Newick.</p>
+
+      <section>
+        <label>
+          Newick tree
+          <textarea id="tree-editor" rows="3" spellcheck="false" aria-describedby="tree-status"></textarea>
+        </label>
+        <p id="tree-status" role="status" data-valid="true"></p>
+      </section>
+
+      <section>
+        <form id="send-form" class="toolbar">
+          <label>
+            Destination URL
+            <input id="target" value="http://localhost:5182/" spellcheck="false" />
+          </label>
+          <button type="submit" id="send">Send</button>
+        </form>
+        <p id="status" role="status"></p>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

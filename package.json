@@ -12,7 +12,7 @@
   "workspaces": ["packages/*", "examples/*"],
   "scripts": {
     "build": "npm run build -w @cdep/protocol && npm run build -w @cdep/formats && npm run build -w @cdep/browser",
-    "typecheck": "npm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/sequence-app/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit && tsc -p examples/hello-sender/tsconfig.json --noEmit && tsc -p examples/hello-receiver/tsconfig.json --noEmit",
+    "typecheck": "npm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/newick-sender/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit && tsc -p examples/hello-sender/tsconfig.json --noEmit && tsc -p examples/hello-receiver/tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
