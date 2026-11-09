@@ -21,13 +21,13 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: "pnpm --filter @cdep/example-sequence-app dev",
+      command: "npm run dev -w @cdep/example-sequence-app",
       url: "http://127.0.0.1:5181/",
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
     },
     {
-      command: "pnpm --filter @cdep/example-tree-viewer dev",
+      command: "npm run dev -w @cdep/example-tree-viewer",
       url: "http://localhost:5182/",
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,

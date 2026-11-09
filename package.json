@@ -5,18 +5,19 @@
   "description": "Client Data Exchange Protocol: capability discovery and user-approved dataset transfer between browser applications, with no backend.",
   "license": "MIT",
   "type": "module",
-  "packageManager": "pnpm@10.23.0",
+  "packageManager": "npm@10.9.2",
   "engines": {
     "node": ">=20"
   },
+  "workspaces": ["packages/*", "examples/*"],
   "scripts": {
-    "build": "pnpm -r --filter './packages/**' run build",
-    "typecheck": "pnpm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/sequence-app/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit && tsc -p examples/hello-sender/tsconfig.json --noEmit && tsc -p examples/hello-receiver/tsconfig.json --noEmit",
+    "build": "npm run build -w @cdep/protocol && npm run build -w @cdep/formats && npm run build -w @cdep/browser",
+    "typecheck": "npm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/sequence-app/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit && tsc -p examples/hello-sender/tsconfig.json --noEmit && tsc -p examples/hello-receiver/tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
     "e2e:chromium": "playwright test --project=chromium",
-    "verify": "pnpm run typecheck && pnpm test && pnpm e2e"
+    "verify": "npm run typecheck && npm test && npm run e2e"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
@@ -24,8 +25,5 @@
     "typescript": "^5.7.2",
     "vite": "^6.0.0",
     "vitest": "^2.1.8"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
   }
 }

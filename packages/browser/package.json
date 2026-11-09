@@ -19,7 +19,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@cdep/protocol": "workspace:*",
+    "@cdep/protocol": "^0.1.0",
     "penpal": "^8.0.1"
   }
 }

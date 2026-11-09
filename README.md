@@ -159,12 +159,12 @@ identifiers, so a bundle id is purely a sender-side label.
 ## Run the demos
 
 ```sh
-pnpm install
-pnpm build            # packages emit dist/; the demos import it
-pnpm --filter @cdep/example-sequence-app dev     # http://127.0.0.1:5181
-pnpm --filter @cdep/example-tree-viewer dev      # http://localhost:5182
-pnpm --filter @cdep/example-hello-sender dev     # http://localhost:5185
-pnpm --filter @cdep/example-hello-receiver dev   # http://localhost:5186
+npm install
+npm run build            # packages emit dist/; the demos import it
+npm run dev -w @cdep/example-sequence-app     # http://127.0.0.1:5181
+npm run dev -w @cdep/example-tree-viewer      # http://localhost:5182
+npm run dev -w @cdep/example-hello-sender     # http://localhost:5185
+npm run dev -w @cdep/example-hello-receiver   # http://localhost:5186
 ```
 
 Different hostnames and ports, so every demo transfer is cross-origin. Static
@@ -203,9 +203,9 @@ Fixtures for the failure paths:
 ## Verify
 
 ```sh
-pnpm typecheck        # packages + demo apps, no emit
-pnpm test             # 225 Vitest tests, no DOM required
-pnpm e2e              # Chromium, Firefox, WebKit on two loopback origins
+npm run typecheck     # packages + demo apps, no emit
+npm test              # 225 Vitest tests, no DOM required
+npm run e2e           # Chromium, Firefox, WebKit on two loopback origins
 ```
 
 The e2e suite covers: approved cross-origin transfer (asserts the imported tree,

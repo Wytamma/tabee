@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cdep/browser": "workspace:*",
-    "@cdep/formats": "workspace:*",
-    "@cdep/protocol": "workspace:*"
+    "@cdep/browser": "^0.1.0",
+    "@cdep/formats": "^0.1.0",
+    "@cdep/protocol": "^0.1.0"
   },
   "devDependencies": {
     "vite": "^6.0.0"
