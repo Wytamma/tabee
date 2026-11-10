@@ -21,6 +21,8 @@ const elements = {
   status: must<HTMLParagraphElement>("#status"),
 };
 
+elements.target.value = import.meta.env.VITE_TARGET_URL ?? "http://localhost:5186/";
+
 const bridge = createBridge({
   application: { name: "Hello Sender", url: `${location.origin}${location.pathname}` },
   exports: {

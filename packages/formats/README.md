@@ -1,7 +1,7 @@
 # @tabee/formats
 
 Format identifiers and registry helpers for
-[tabEE](https://github.com/Wytamma/cdep).
+[tabEE](https://github.com/Wytamma/tabee).
 
 ## Install
 
@@ -23,7 +23,7 @@ string equality; media types and extensions are display hints only.
 
 ## Documentation
 
-See the [format registry](https://github.com/Wytamma/cdep/blob/main/specification/format-registry.md).
+See the [format registry](https://github.com/Wytamma/tabee/blob/main/specification/format-registry.md).
 
 ## License
 

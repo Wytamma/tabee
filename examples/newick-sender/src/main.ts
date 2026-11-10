@@ -18,6 +18,8 @@ const elements = {
   status: must<HTMLParagraphElement>("#status"),
 };
 
+elements.target.value = import.meta.env.VITE_TARGET_URL ?? "http://localhost:5182/";
+
 /**
  * Shallow structural check only. The receiver parses Newick for real; the
  * sender should not pretend to understand the format, but an obvious typo

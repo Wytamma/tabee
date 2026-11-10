@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>tabEE demos</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #0f172a;
+        --muted: #64748b;
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --border: #e2e8f0;
+        --accent: #0f172a;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e2e8f0;
+          --muted: #94a3b8;
+          --bg: #0b1120;
+          --panel: #111827;
+          --border: #1f2937;
+          --accent: #e2e8f0;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 48px 20px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main { max-width: 720px; margin: 0 auto; }
+      h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: -0.01em; }
+      .sub { margin: 0 0 28px; color: var(--muted); }
+      .grid { display: grid; gap: 14px; }
+      a.card {
+        display: block;
+        padding: 18px 20px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: inherit;
+        text-decoration: none;
+      }
+      a.card:hover { border-color: var(--accent); }
+      .name { font-weight: 650; }
+      .desc { margin-top: 2px; color: var(--muted); font-size: 14px; }
+      footer { margin-top: 28px; color: var(--muted); font-size: 13px; }
+      footer a { color: inherit; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>tabEE demos</h1>
+      <p class="sub">
+        The tab exchange engine: capability discovery, user-approved dataset
+        transfer, and receipts between browser applications.
+      </p>
+
+      <div class="grid">
+        <a class="card" href="./newick-sender/">
+          <div class="name">Newick Sender</div>
+          <div class="desc">Edit a Newick tree and send it to Tree Viewer.</div>
+        </a>
+        <a class="card" href="./tree-viewer/">
+          <div class="name">Tree Viewer</div>
+          <div class="desc">Receiver only: imports Newick and renders the cladogram.</div>
+        </a>
+        <a class="card" href="./hello-sender/">
+          <div class="name">Hello Sender</div>
+          <div class="desc">Smallest sender: one custom text format, one button.</div>
+        </a>
+        <a class="card" href="./hello-receiver/">
+          <div class="name">Hello Receiver</div>
+          <div class="desc">Smallest receiver: prints the incoming text.</div>
+        </a>
+      </div>
+
+      <footer>
+        Open a sender and its receiver in two tabs, then press Send.
+        Source: <a href="https://github.com/Wytamma/tabee">Wytamma/tabee</a>.
+      </footer>
+    </main>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 # @tabee/browser
 
-Browser SDK for [tabEE](https://github.com/Wytamma/cdep) — capability discovery,
+Browser SDK for [tabEE](https://github.com/Wytamma/tabee) — capability discovery,
 user-approved dataset transfer, and receipts between two browser applications.
 
 ## Install
@@ -31,8 +31,8 @@ receiver imported the dataset.
 
 ## Documentation
 
-See the [project README](https://github.com/Wytamma/cdep#readme) and the
-[wire specification](https://github.com/Wytamma/cdep/blob/main/specification/protocol.md).
+See the [project README](https://github.com/Wytamma/tabee#readme) and the
+[wire specification](https://github.com/Wytamma/tabee/blob/main/specification/protocol.md).
 
 ## License
 

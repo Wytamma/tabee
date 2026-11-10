@@ -1,7 +1,7 @@
 # @tabee/protocol
 
 Transport-agnostic wire types, validators, negotiation, and transfer state
-machine for [tabEE](https://github.com/Wytamma/cdep). No DOM APIs.
+machine for [tabEE](https://github.com/Wytamma/tabee). No DOM APIs.
 
 ## Install
 
@@ -22,7 +22,7 @@ import {
 
 ## Documentation
 
-See the [protocol specification](https://github.com/Wytamma/cdep/blob/main/specification/protocol.md).
+See the [protocol specification](https://github.com/Wytamma/tabee/blob/main/specification/protocol.md).
 
 ## License
 
