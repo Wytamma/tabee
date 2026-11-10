@@ -3,7 +3,7 @@
 # tabEE — the tab exchange engine
 
 [![npm version](https://img.shields.io/npm/v/%40tabee%2Fbrowser)](https://www.npmjs.com/package/@tabee/browser)
-[![license](https://img.shields.io/npm/l/%40tabee%2Fbrowser)](https://github.com/Wytamma/cdep/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/%40tabee%2Fbrowser)](https://github.com/Wytamma/tabee/blob/main/LICENSE)
 
 tabEE moves datasets between two browser applications: one opens the other,
 they discover matching formats, the user approves what arrives, and the
@@ -178,6 +178,8 @@ identifiers, so a bundle id is purely a sender-side label.
 
 ## Examples
 
+Hosted demos: <https://tabee.wytamma.com/>
+
 The repository ships two pairs of standalone apps:
 
 - **Newick Sender** — a textarea is the exported payload. Its check is
@@ -201,6 +203,9 @@ npm run dev -w @tabee/example-hello-receiver   # http://localhost:5186
 
 Each app runs on a different loopback hostname or port, so every demo transfer
 is cross-origin. Static hosting is enough; nothing talks to a server.
+
+Pushes to `main` build and deploy the examples to GitHub Pages through
+`.github/workflows/pages.yml`.
 
 ## Development
 
