@@ -32,5 +32,11 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
     },
+    {
+      command: "npm run dev -w @tabee/example-isolated-sender",
+      url: "http://127.0.0.1:5183/",
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+    },
   ],
 });

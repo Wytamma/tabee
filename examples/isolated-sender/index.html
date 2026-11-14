@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Isolated Sender · tabEE demo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #0f172a;
+        --muted: #64748b;
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --border: #e2e8f0;
+        --accent: #0f172a;
+        --error: #b91c1c;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e2e8f0;
+          --muted: #94a3b8;
+          --bg: #0b1120;
+          --panel: #111827;
+          --border: #1f2937;
+          --accent: #e2e8f0;
+          --error: #f87171;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 32px 20px 64px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main { max-width: 680px; margin: 0 auto; }
+      h1 { margin: 0 0 4px; font-size: 24px; }
+      .sub { margin: 0 0 24px; color: var(--muted); }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      h2 {
+        margin: 0 0 12px;
+        font-size: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+      label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+      textarea, button {
+        font: inherit;
+        color: var(--fg);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 10px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 84px;
+        font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+        resize: vertical;
+      }
+      textarea[aria-invalid="true"] { border-color: var(--error); }
+      button {
+        cursor: pointer;
+        background: var(--accent);
+        color: var(--bg);
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+      a { color: inherit; }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+      .badge[data-isolated="true"] { color: var(--fg); background: color-mix(in srgb, var(--fg) 10%, transparent); }
+      #tree-status { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+      #tree-status[data-valid="false"] { color: var(--error); }
+      #status { min-height: 1.5em; margin: 12px 0 0; font-size: 14px; }
+      #status[data-kind="error"] { color: var(--error); }
+      #exchange-state { margin: 0; font-size: 13px; color: var(--muted); }
+      #exchange-state[data-open="true"] { color: var(--fg); }
+      .steps { margin: 0; padding-left: 20px; font-size: 14px; }
+      .steps li + li { margin-top: 4px; }
+      code { font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Isolated Sender</h1>
+      <p class="sub">
+        A cross-origin isolated app stages a tree; a same-origin exchange page
+        performs the tabEE send.
+      </p>
+
+      <section>
+        <h2>Isolation</h2>
+        <p><span id="isolation" class="badge" data-isolated="false">checking</span></p>
+        <p id="isolation-note">
+          <code>COOP: same-origin</code> + <code>COEP: require-corp</code> enable
+          <code>SharedArrayBuffer</code> (for example, threaded WebAssembly). The same
+          headers sever the handle of any tab this document opens, so
+          <code>window.open()</code> cannot reach a receiver here.
+        </p>
+      </section>
+
+      <section>
+        <label>
+          Newick tree
+          <textarea id="tree-editor" rows="3" spellcheck="false" aria-describedby="tree-status"></textarea>
+        </label>
+        <p id="tree-status" role="status" data-valid="true"></p>
+      </section>
+
+      <section>
+        <h2>Stage for the exchange page</h2>
+        <p class="steps">
+          <span>1. Stage the tree here.</span><br />
+          <span>2. Press <strong>Send</strong> in the exchange tab.</span>
+        </p>
+        <p><button type="button" id="stage">Stage tree</button></p>
+        <p id="status" role="status"></p>
+        <p id="exchange-state" data-open="false">Exchange tab not connected.</p>
+        <p class="sub" style="margin: 12px 0 0">
+          Popups blocked? <a id="open-exchange" href="sidecar.html" target="_blank">Open the exchange tab manually</a>.
+        </p>
+      </section>
+    </main>
+    <script type="module" src="/src/app.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "@tabee/example-isolated-sender",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tabee/browser": "^0.1.0",
+    "@tabee/formats": "^0.1.0",
+    "@tabee/protocol": "^0.1.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

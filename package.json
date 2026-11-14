@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "build": "npm run build -w @tabee/protocol && npm run build -w @tabee/formats && npm run build -w @tabee/browser",
-    "typecheck": "npm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/newick-sender/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit && tsc -p examples/hello-sender/tsconfig.json --noEmit && tsc -p examples/hello-receiver/tsconfig.json --noEmit",
+    "typecheck": "npm run build && tsc -p tsconfig.tools.json --noEmit && tsc -p examples/newick-sender/tsconfig.json --noEmit && tsc -p examples/tree-viewer/tsconfig.json --noEmit && tsc -p examples/hello-sender/tsconfig.json --noEmit && tsc -p examples/hello-receiver/tsconfig.json --noEmit && tsc -p examples/isolated-sender/tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",

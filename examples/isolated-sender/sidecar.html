@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Exchange tab · tabEE demo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #0f172a;
+        --muted: #64748b;
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --border: #e2e8f0;
+        --accent: #0f172a;
+        --error: #b91c1c;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e2e8f0;
+          --muted: #94a3b8;
+          --bg: #0b1120;
+          --panel: #111827;
+          --border: #1f2937;
+          --accent: #e2e8f0;
+          --error: #f87171;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 32px 20px 64px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main { max-width: 720px; margin: 0 auto; }
+      h1 { margin: 0 0 4px; font-size: 24px; }
+      .sub { margin: 0 0 24px; color: var(--muted); }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      h2 {
+        margin: 0 0 12px;
+        font-size: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+      label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+      input, button {
+        font: inherit;
+        color: var(--fg);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 10px;
+      }
+      input { min-width: 320px; max-width: 100%; }
+      button {
+        cursor: pointer;
+        background: var(--accent);
+        color: var(--bg);
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+      button:disabled { opacity: 0.55; cursor: not-allowed; }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+      .facts { display: grid; gap: 6px; margin: 0; font-size: 14px; }
+      .facts div { display: flex; gap: 8px; align-items: baseline; }
+      .facts dt { color: var(--muted); font-size: 13px; }
+      .facts dd { margin: 0; }
+      #isolation-warning {
+        margin: 12px 0 0;
+        padding: 10px 12px;
+        border: 1px solid var(--error);
+        border-radius: 8px;
+        color: var(--error);
+        font-size: 14px;
+      }
+      #staged-meta { margin: 0; font-size: 13px; color: var(--muted); }
+      #tree-preview {
+        margin: 12px 0 0;
+        padding: 12px;
+        max-height: 220px;
+        overflow: auto;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      #tree-preview:empty { display: none; }
+      .target-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+      #target-origin { font-weight: 600; }
+      #target-origin[data-valid="false"] { color: var(--error); }
+      #status { min-height: 1.5em; margin: 12px 0 0; font-size: 14px; }
+      #status[data-kind="error"] { color: var(--error); }
+      code { font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Exchange tab</h1>
+      <p class="sub">
+        This page is served without COOP, so it can open the receiver and keep
+        the handle tabEE needs. It never stages on its own: a tree only moves
+        when you press Send.
+      </p>
+
+      <section>
+        <h2>Transport conditions</h2>
+        <dl class="facts">
+          <div>
+            <dt>This document</dt>
+            <dd><span id="isolation" class="badge" data-isolated="false">checking</span></dd>
+          </div>
+          <div>
+            <dt><code>window.opener</code></dt>
+            <dd><span id="sealed">checking</span></dd>
+          </div>
+        </dl>
+        <p id="isolation-warning" hidden>
+          This page is cross-origin isolated. A host rule is applying
+          <code>COOP</code>/<code>COEP</code> to the exchange page; tabEE cannot
+          hold the receiving window's handle here. Serve this path without
+          those headers.
+        </p>
+      </section>
+
+      <section>
+        <h2>Staged tree</h2>
+        <p id="staged-name"><strong>Nothing staged</strong></p>
+        <p id="staged-meta">Stage a tree in the app tab.</p>
+        <pre id="tree-preview"></pre>
+      </section>
+
+      <section>
+        <h2>Send</h2>
+        <form id="send-form" class="target-row">
+          <label>
+            Destination URL
+            <input id="target" value="http://localhost:5182/" spellcheck="false" />
+          </label>
+          <button type="submit" id="send" disabled>Send</button>
+        </form>
+        <p class="sub" style="margin: 12px 0 0">
+          Target origin: <span id="target-origin">checking</span>. The receiving
+          tab shows its own consent dialog with this page's verified origin.
+        </p>
+        <p id="status" role="status"></p>
+      </section>
+    </main>
+    <script type="module" src="/src/sidecar.ts"></script>
+  </body>
+</html>

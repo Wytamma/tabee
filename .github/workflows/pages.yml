@@ -56,6 +56,11 @@ jobs:
           mkdir -p _site/hello-receiver
           cp -R examples/hello-receiver/dist/. _site/hello-receiver/
 
+          VITE_BASE=/isolated-sender/ VITE_TARGET_URL=https://tabee.wytamma.com/tree-viewer/ \
+            npm run build -w @tabee/example-isolated-sender
+          mkdir -p _site/isolated-sender
+          cp -R examples/isolated-sender/dist/. _site/isolated-sender/
+
           cp site/index.html _site/index.html
           cp site/CNAME _site/CNAME
 

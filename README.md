@@ -180,7 +180,7 @@ identifiers, so a bundle id is purely a sender-side label.
 
 Hosted demos: <https://tabee.wytamma.com/>
 
-The repository ships two pairs of standalone apps:
+The repository ships these standalone apps:
 
 - **Newick Sender** — a textarea is the exported payload. Its check is
   structural only; the receiver performs the real parse. An obviously malformed
@@ -191,6 +191,12 @@ The repository ships two pairs of standalone apps:
 - **Hello Sender / Hello Receiver** — the smallest complete exchange: a private
   format identifier (`org.example.format.text.v1`), one export adapter, one
   import adapter, and no registry package or `normalizeFormatKey`.
+- **Isolated Sender** — a cross-origin isolated app (`COOP: same-origin` +
+  `COEP: require-corp`) and a same-origin exchange page served without those
+  headers. COOP severs the handle of any window the isolated document opens, so
+  it stages the tree over `BroadcastChannel`; the exchange page opens the
+  receiver from its own click. Static hosts must apply the same per-path header
+  split, or the app simply runs unisolated.
 
 ```sh
 npm install
@@ -199,6 +205,7 @@ npm run dev -w @tabee/example-newick-sender    # http://127.0.0.1:5181
 npm run dev -w @tabee/example-tree-viewer      # http://localhost:5182
 npm run dev -w @tabee/example-hello-sender     # http://localhost:5185
 npm run dev -w @tabee/example-hello-receiver   # http://localhost:5186
+npm run dev -w @tabee/example-isolated-sender  # http://127.0.0.1:5183
 ```
 
 Each app runs on a different loopback hostname or port, so every demo transfer
@@ -226,6 +233,7 @@ examples/newick-sender   sender only: editable Newick draft, one Send button
 examples/tree-viewer     receiver only: imports Newick, renders SVG
 examples/hello-sender    smallest sender: one custom format, textarea, Send
 examples/hello-receiver  smallest receiver: one custom format, prints the text
+examples/isolated-sender COOP-isolated app + no-COOP exchange page (two clicks)
 specification/       protocol, discovery, security, format registry
 tests/e2e            Playwright, two loopback origins, three engines
 ```
